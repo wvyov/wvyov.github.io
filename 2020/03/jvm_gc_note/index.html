@@ -88,7 +88,7 @@
 <meta property="og:image" content="http://wvyov.me/image/jvm_memory.jpeg">
 <meta property="og:image" content="http://wvyov.me/image/object_allocation.jpeg">
 <meta property="article:published_time" content="2020-03-23T02:36:10.000Z">
-<meta property="article:modified_time" content="2020-03-25T09:28:04.264Z">
+<meta property="article:modified_time" content="2020-03-25T10:16:36.928Z">
 <meta property="article:author" content="wvyov">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://wvyov.me/image/jvm_memory.jpeg">
@@ -644,7 +644,41 @@
 <td>jstack -l <em>pid</em></td>
 </tr>
 </tbody></table>
-<h4 id="jcmd"><a href="#jcmd" class="headerlink" title="jcmd"></a>jcmd</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jcmd &lt;pid | main class&gt; &lt;command ...|PerfCounter.print|-f file&gt;</span><br><span class="line">   or: jcmd -l</span><br><span class="line">   or: jcmd -h</span><br></pre></td></tr></table></figure>
+<h4 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h4><p>java 参数工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jinfo [option] &lt;pid&gt;</span><br><span class="line">    (to connect to running process)</span><br><span class="line">jinfo [option] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">    (to connect to remote debug server)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-flags</td>
+<td>所有的参数信息</td>
+<td>jinfo -flags <em>pid</em></td>
+</tr>
+<tr>
+<td>-flag <em>name</em></td>
+<td>查看单个参数信息</td>
+<td>jinfo -flag <em>name pid</em></td>
+</tr>
+<tr>
+<td>-flag <em>[+/-]name</em></td>
+<td>启用关闭某个参数</td>
+<td>jinfo -flag <em>+name pid</em></td>
+</tr>
+<tr>
+<td>-flag <em>name=value</em></td>
+<td>设置某个参数</td>
+<td>jinfo -flag <em>name=value pid</em></td>
+</tr>
+</tbody></table>
+<p>ps: jinfo 可以更改任意参数的值，但 JVM 并不一定会响应更改。只有那些在 Printflagsfinal 输出中标记为 manageable 的标志，才会生效。</p>
+<h4 id="jcmd"><a href="#jcmd" class="headerlink" title="jcmd"></a>jcmd</h4><p>java 命令行工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jcmd &lt;pid | main class&gt; &lt;command ...|PerfCounter.print|-f file&gt;</span><br><span class="line">   or: jcmd -l</span><br><span class="line">   or: jcmd -h</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -813,7 +847,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数设置"><span class="nav-number">1.</span> <span class="nav-text">参数设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存区域"><span class="nav-number">2.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象分配"><span class="nav-number">3.</span> <span class="nav-text">对象分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-算法"><span class="nav-number">4.</span> <span class="nav-text">GC 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收器（CMS）"><span class="nav-number">5.</span> <span class="nav-text">垃圾回收器（CMS）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-工具"><span class="nav-number">6.</span> <span class="nav-text">GC 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">6.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jps"><span class="nav-number">6.2.</span> <span class="nav-text">jps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstat"><span class="nav-number">6.3.</span> <span class="nav-text">jstat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jmap"><span class="nav-number">6.4.</span> <span class="nav-text">jmap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstack"><span class="nav-number">6.5.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd"><span class="nav-number">6.6.</span> <span class="nav-text">jcmd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#other"><span class="nav-number">6.7.</span> <span class="nav-text">other</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数设置"><span class="nav-number">1.</span> <span class="nav-text">参数设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存区域"><span class="nav-number">2.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象分配"><span class="nav-number">3.</span> <span class="nav-text">对象分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-算法"><span class="nav-number">4.</span> <span class="nav-text">GC 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收器（CMS）"><span class="nav-number">5.</span> <span class="nav-text">垃圾回收器（CMS）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-工具"><span class="nav-number">6.</span> <span class="nav-text">GC 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">6.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jps"><span class="nav-number">6.2.</span> <span class="nav-text">jps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstat"><span class="nav-number">6.3.</span> <span class="nav-text">jstat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jmap"><span class="nav-number">6.4.</span> <span class="nav-text">jmap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstack"><span class="nav-number">6.5.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jinfo"><span class="nav-number">6.6.</span> <span class="nav-text">jinfo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd"><span class="nav-number">6.7.</span> <span class="nav-text">jcmd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#other"><span class="nav-number">6.8.</span> <span class="nav-text">other</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             
 
           </div>
