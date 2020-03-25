@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JDK 8 参数设置内存区域设置：    参数 含义 说明    -XmsN 堆空间初始值 默认值取决于：OS、Memory、JVM 等   -XmxN 堆空间最大值 默认值取决于：OS、Memory、JVM 等   -Xss&#x3D;N 线程栈大小    -XX:NewSize&#x3D;N 新生代空间初始值    -XX:MaxNewSize&#x3D; N 新生代空间最大值    -XmnN 同时设置 NewSize">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笔记 - JVM GC">
+<meta property="og:url" content="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil">
+<meta property="og:site_name" content="无有的小书屋">
+<meta property="og:description" content="JDK 8 参数设置内存区域设置：    参数 含义 说明    -XmsN 堆空间初始值 默认值取决于：OS、Memory、JVM 等   -XmxN 堆空间最大值 默认值取决于：OS、Memory、JVM 等   -Xss&#x3D;N 线程栈大小    -XX:NewSize&#x3D;N 新生代空间初始值    -XX:MaxNewSize&#x3D; N 新生代空间最大值    -XmnN 同时设置 NewSize">
+<meta property="og:image" content="http://wvyov.me/image/jvm_memory.jpeg">
+<meta property="og:image" content="http://wvyov.me/image/object_allocation.jpeg">
+<meta property="article:published_time" content="2020-03-23T02:36:10.000Z">
+<meta property="article:modified_time" content="2020-03-25T09:02:12.961Z">
+<meta property="article:author" content="wvyov">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wvyov.me/image/jvm_memory.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil"/>
+
+
+
+
+
+  <title>笔记 - JVM GC | 无有的小书屋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无有的小书屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wvyov">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无有的小书屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">笔记 - JVM GC</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-23T10:36:10+08:00">
+                2020-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>JDK 8</p>
+<h3 id="参数设置"><a href="#参数设置" class="headerlink" title="参数设置"></a>参数设置</h3><p>内存区域设置：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-Xms<em>N</em></td>
+<td>堆空间初始值</td>
+<td>默认值取决于：OS、Memory、JVM 等</td>
+</tr>
+<tr>
+<td>-Xmx<em>N</em></td>
+<td>堆空间最大值</td>
+<td>默认值取决于：OS、Memory、JVM 等</td>
+</tr>
+<tr>
+<td>-Xss=<em>N</em></td>
+<td>线程栈大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:NewSize=<em>N</em></td>
+<td>新生代空间初始值</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:MaxNewSize= N</td>
+<td>新生代空间最大值</td>
+<td></td>
+</tr>
+<tr>
+<td>-Xmn<em>N</em></td>
+<td>同时设置 NewSize 和 MaxNewSize</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:NewRatio=<em>N</em></td>
+<td>新生代与老年代的空间占用比率</td>
+<td>NewSize=HeapSize / (1 + NewRatio)，默认 <em>2</em></td>
+</tr>
+<tr>
+<td>-XX:SurvivorRatio=<em>N</em></td>
+<td>Eden 空间与 Survivor 空间比率</td>
+<td>默认 <em>8</em></td>
+</tr>
+<tr>
+<td>-XX:MinSurvivorRatio=<em>N</em></td>
+<td>最小比率</td>
+<td>默认 <em>3</em></td>
+</tr>
+<tr>
+<td>-XX:TLABSize=<em>N</em></td>
+<td>TLAB 初始值</td>
+<td>默认 <em>0</em>，表示取决于，线程数、Eden 空间大小、线程的分配率</td>
+</tr>
+<tr>
+<td>-XX:MinTLABSize=<em>N</em></td>
+<td>TLAB 最小值</td>
+<td>默认 <em>2048</em></td>
+</tr>
+<tr>
+<td>-XX:MetaspaceSize=<em>N</em></td>
+<td>元空间初始值</td>
+<td>默认无限制</td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize= <em>N</em></td>
+<td>元空间最大值</td>
+<td>默认无限制</td>
+</tr>
+</tbody></table>
+<p>内存管理：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-XX:+HeapDumpOnOutOfMemoryError</td>
+<td>OOM 时，自动堆转储</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:HeapDumpPath=*<path>*</td>
+<td>自动堆转储时，保存的文件名</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>GC：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-XX:ParallelGCThreads=<em>N</em></td>
+<td>垃圾收集器的线程数</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:InitialTenuringThreshold=<em>N</em></td>
+<td>对象在 Survivor 存活的GC周期数，初始值</td>
+<td>CMS 默认  <em>6</em></td>
+</tr>
+<tr>
+<td>-XX:MaxTenuringThreshold=<em>N</em></td>
+<td>对象在 Survivor 存活的最大GC周期数</td>
+<td>CMS 最大晋升值 <em>6</em></td>
+</tr>
+</tbody></table>
+<p>GC 算法：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-XX:+UseConcMarkSweepGC</td>
+<td>使用 CMS 收集器</td>
+<td>JDK 8 默认</td>
+</tr>
+</tbody></table>
+<p>GC log：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-verbose:gc</td>
+<td>输出 GC 日志</td>
+<td>等于设置 -XX:+PrintGC</td>
+</tr>
+<tr>
+<td>-Xloggc:*<path>*</td>
+<td>将 GC日志记录输出到文件</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintGCDetails</td>
+<td>开启GC的详细日志</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintGCTimeStamps</td>
+<td>打印相对时间戳</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintGCDateStamps</td>
+<td>打印日期时间戳</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+UseGCLogFileRotation</td>
+<td>开启GC日志循环功能以节省文件空间</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:NumberOfGCLogFiles=<em>N</em></td>
+<td>开启日志循环时，设定保留多少个日志文件</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:GCLogFileSize=<em>N</em></td>
+<td>开启日志循环时，设定每个日志文件的大小</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintTLAB</td>
+<td>GC日志中，输出TLAB相关的概略信息</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h3><p><img src="/image/jvm_memory.jpeg" alt="JVM_Memory"></p>
+<h3 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h3><p><img src="/image/object_allocation.jpeg" alt="object_allocation"></p>
+<p>CMS：</p>
+<ul>
+<li>并发模式失效（concurrent mode failure）：Old 没有足够空间容纳晋升对象。STW，退化为 Full GC。</li>
+<li>晋升失败（promotion failed）：Old 有足够空间，但碎片化，无足够连续空间。STW，对 Old 整理、压缩。</li>
+</ul>
+<p>最终仍不能分配：</p>
+<p>java.lang.OutOfMemoryError: Java heap space</p>
+<h3 id="GC-算法"><a href="#GC-算法" class="headerlink" title="GC 算法"></a>GC 算法</h3><p>引用计数：</p>
+<p>记录每一个对象被其他对象引用的个数。引用计数不为 0，该对象就是存活对象。没办法处理循环引用。</p>
+<p>可达性分析：</p>
+<p>从 GC roots 开始，引用可达的对象就是存活对象。</p>
+<ul>
+<li>标记-清除（Mark-Sweep）。</li>
+<li>标记-复制（Mark-Copy）。</li>
+<li>标记-整理（Mark-Compact）。</li>
+</ul>
+<h3 id="垃圾回收器（CMS）"><a href="#垃圾回收器（CMS）" class="headerlink" title="垃圾回收器（CMS）"></a>垃圾回收器（CMS）</h3><p>初始标记：</p>
+<p>标记 GC Roots 直接关联的对象。STW。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.376+0800: 59944.001: [GC (CMS Initial Mark) [1 CMS-initial-mark: 1027928K(1329152K)] 1579202K(2020352K), 0.0843949 secs] [Times: user=0.33 sys=0.00, real=0.09 secs]</span><br></pre></td></tr></table></figure>
+
+<p>并发标记：</p>
+<p>从 GC Roots 直接关联的对象开始，遍历整个对象图。并发（用户线程与垃圾收集线程，新生代垃圾收集线程与老年代垃圾收集线程）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.461+0800: 59944.086: [CMS-concurrent-mark-start]</span><br><span class="line">2020-03-17T10:27:04.842+0800: 59944.467: [CMS-concurrent-mark: 0.381/0.381 secs] [Times: user=0.38 sys=0.00, real=0.38 secs]</span><br></pre></td></tr></table></figure>
+
+<p>并发预清理：</p>
+<p>查找上一阶段标记过程中，晋升或引用关系变更的对象，重新扫描。并发。</p>
+<p>ps: Card marking</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.842+0800: 59944.467: [CMS-concurrent-preclean-start]</span><br><span class="line">2020-03-17T10:27:04.846+0800: 59944.471: [CMS-concurrent-preclean: 0.004/0.004 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]</span><br></pre></td></tr></table></figure>
+
+<p>并发可中止预清理：</p>
+<p>与并发预清理做的事情一样。“可中断”目的是尽量缩短停顿时间，避免连续停顿。并发。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.846+0800: 59944.471: [CMS-concurrent-abortable-preclean-start]</span><br><span class="line">2020-03-17T10:27:04.846+0800: 59944.471: [CMS-concurrent-abortable-preclean: 0.000/0.000 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]</span><br></pre></td></tr></table></figure>
+
+<p>重新标记：</p>
+<p>从 GC Roots 开始重新扫描引用关系更新过的对象。STW。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.847+0800: 59944.472: [GC (CMS Final Remark) [YG occupancy: 551387 K (691200 K)]2020-03-17T10:27:04.847+0800: 59944.472: [Rescan (parallel) , 0.0890724 secs]2020-03-17T10:27:04.936+0800: 59944.561: [weak refs processing, 0.0000877 secs]2020-03-17T10:27:04.936+0800: 59944.561: [class unloading, 0.0264603 secs]2020-03-17T10:27:04.962+0800: 59944.588: [scrub symbol table, 0.0090855 secs]2020-03-17T10:27:04.972+0800: 59944.597: [scrub string table, 0.0016117 secs][1 CMS-remark: 1027928K(1329152K)] 1579315K(2020352K), 0.1266247 secs] [Times: user=0.39 sys=0.00, real=0.13 secs]</span><br></pre></td></tr></table></figure>
+
+<p>并发清除：</p>
+<p>清除垃圾。并发。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:04.974+0800: 59944.599: [CMS-concurrent-sweep-start]</span><br><span class="line">2020-03-17T10:27:05.112+0800: 59944.737: [CMS-concurrent-sweep: 0.138/0.138 secs] [Times: user=0.14 sys=0.00, real=0.14 secs]</span><br></pre></td></tr></table></figure>
+
+<p>并发重置：</p>
+<p>一个 CMS 垃圾回收周期结束，重置 CMS 内部数据。并发。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2020-03-17T10:27:05.112+0800: 59944.737: [CMS-concurrent-reset-start]</span><br><span class="line">2020-03-17T10:27:05.115+0800: 59944.741: [CMS-concurrent-reset: 0.003/0.003 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]</span><br></pre></td></tr></table></figure>
+
+<h3 id="GC-工具"><a href="#GC-工具" class="headerlink" title="GC 工具"></a>GC 工具</h3><h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintFlagsFinal -version</span><br><span class="line"></span><br><span class="line">jps -v</span><br><span class="line"></span><br><span class="line">jstat -options</span><br><span class="line">jstat -gcutil &lt;pid&gt; 3s 10</span><br><span class="line"></span><br><span class="line">jmap -heap &lt;pid&gt;</span><br><span class="line">jmap -dump:live,format=b,file=heap.hprof &lt;pid&gt;</span><br><span class="line"></span><br><span class="line">jstack -l &lt;pid&gt; &gt; stack.log</span><br><span class="line"></span><br><span class="line">jcmd &lt;pid&gt; help</span><br><span class="line">jcmd &lt;pid&gt; VM.flags</span><br><span class="line">jcmd &lt;pid&gt; VM.command_line</span><br></pre></td></tr></table></figure>
+
+<h4 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h4><p>查看 JVM 进程信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jps [-help]</span><br><span class="line">jps [-q] [-mlvV] [&lt;hostid&gt;]</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-v</td>
+<td>输出 JVM 参数</td>
+<td>jps -v</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>输出jar的完全路径名</td>
+<td>jps -l</td>
+</tr>
+<tr>
+<td>-m</td>
+<td>输出main method的参数</td>
+<td>jps -m</td>
+</tr>
+</tbody></table>
+<h4 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h4><p>JVM 监控工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jstat -help|-options</span><br><span class="line">jstat -&lt;option&gt; [-t] [-h&lt;lines&gt;] &lt;vmid&gt; [ interval [ s|ms ] [ count ] ]]</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-options</td>
+<td>查看统计选项</td>
+<td>jstat -options</td>
+</tr>
+<tr>
+<td>-gcutil</td>
+<td>简要的垃圾回收信息统计</td>
+<td>jstat -gcutil <em>pid</em> 3s 10</td>
+</tr>
+<tr>
+<td>-gc</td>
+<td>垃圾回收信息统计</td>
+<td>jstat -gc <em>pid</em> 3s 10</td>
+</tr>
+</tbody></table>
+<h4 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h4><p>查看 Java 内存</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jmap [option] &lt;pid&gt;</span><br><span class="line">    (to connect to running process)</span><br><span class="line">jmap [option] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">    (to connect to remote debug server)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-heap</td>
+<td>打印 heap 的概要信息</td>
+<td>jmap -heap <em>pid</em></td>
+</tr>
+<tr>
+<td>-histo[:live]</td>
+<td>打印 heap 的直方图</td>
+<td>jmap -histo <em>pid</em></td>
+</tr>
+<tr>
+<td>-dump:<dump-options></td>
+<td>导出 JVM 内存信息,</td>
+<td>jmap -dump:live,format=b,file=<em>heap.hprof</em> <em>pid</em></td>
+</tr>
+</tbody></table>
+<h4 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h4><p>查看 java 栈</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">jstack [-l] &lt;pid&gt;</span><br><span class="line">    (to connect to running process)</span><br><span class="line">jstack -F [-m] [-l] &lt;pid&gt;</span><br><span class="line">    (to connect to a hung process)</span><br><span class="line">jstack [-m] [-l] [server_id@]&lt;remote server IP or hostname&gt;</span><br><span class="line">    (to connect to a remote debug server)</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-m</td>
+<td>打印 java &amp; native 栈</td>
+<td>jstack -m <em>pid</em></td>
+</tr>
+<tr>
+<td>-l</td>
+<td>长列表，打印关于锁的附加信息</td>
+<td>jstack -l <em>pid</em></td>
+</tr>
+</tbody></table>
+<h4 id="jcmd"><a href="#jcmd" class="headerlink" title="jcmd"></a>jcmd</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jcmd &lt;pid | main class&gt; &lt;command ...|PerfCounter.print|-f file&gt;</span><br><span class="line">   or: jcmd -l</span><br><span class="line">   or: jcmd -h</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数（cmmand）</th>
+<th>含义</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>help</td>
+<td>显示所有可用的命令</td>
+<td>jcmd <em>pid</em> help</td>
+</tr>
+<tr>
+<td>VM.flags [-all]</td>
+<td>打印 jvm 参数</td>
+<td>jcmd <em>pid</em> VM.flags</td>
+</tr>
+<tr>
+<td>VM.command_line</td>
+<td>VM 摘要</td>
+<td>jcmd <em>pid</em> VM.command_line</td>
+</tr>
+</tbody></table>
+<h4 id="other"><a href="#other" class="headerlink" title="other"></a>other</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 输出进程 &lt;pid&gt; 的全部线程信息</span></span><br><span class="line">top -Hp &lt;pid&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 输出 16 进制</span></span><br><span class="line">printf "%x\n" &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Memory Analyzer(MAT): 堆转储文件分析工具。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><ul>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/</a></li>
+<li>Java 性能权威指南</li>
+<li><a href="https://pingao777.github.io/2019/05/03/Java%20HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" target="_blank" rel="noopener">https://pingao777.github.io/2019/05/03/Java%20HotSpot虚拟机垃圾收集优化指南</a></li>
+<li><a href="https://segmentfault.com/a/1190000007765676" target="_blank" rel="noopener">https://segmentfault.com/a/1190000007765676</a></li>
+<li><a href="https://www.cnblogs.com/grey-wolf/p/10222758.html" target="_blank" rel="noopener">https://www.cnblogs.com/grey-wolf/p/10222758.html</a></li>
+<li><a href="https://gist.github.com/wvyov/07f881eea3ff56078440f861ceb901a3" target="_blank" rel="noopener">https://gist.github.com/wvyov/07f881eea3ff56078440f861ceb901a3</a></li>
+<li>深入理解 Java 虚拟机（第3版）</li>
+<li><a href="http://ifeve.com/jvm-cms-log/" target="_blank" rel="noopener">http://ifeve.com/jvm-cms-log/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wvyov</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数设置"><span class="nav-number">1.</span> <span class="nav-text">参数设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存区域"><span class="nav-number">2.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象分配"><span class="nav-number">3.</span> <span class="nav-text">对象分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-算法"><span class="nav-number">4.</span> <span class="nav-text">GC 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收器（CMS）"><span class="nav-number">5.</span> <span class="nav-text">垃圾回收器（CMS）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-工具"><span class="nav-number">6.</span> <span class="nav-text">GC 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">6.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jps"><span class="nav-number">6.2.</span> <span class="nav-text">jps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstat"><span class="nav-number">6.3.</span> <span class="nav-text">jstat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jmap"><span class="nav-number">6.4.</span> <span class="nav-text">jmap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jstack"><span class="nav-number">6.5.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd"><span class="nav-number">6.6.</span> <span class="nav-text">jcmd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#other"><span class="nav-number">6.7.</span> <span class="nav-text">other</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wvyov</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
