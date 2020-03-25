@@ -88,7 +88,7 @@
 <meta property="og:image" content="http://wvyov.me/image/jvm_memory.jpeg">
 <meta property="og:image" content="http://wvyov.me/image/object_allocation.jpeg">
 <meta property="article:published_time" content="2020-03-23T02:36:10.000Z">
-<meta property="article:modified_time" content="2020-03-25T09:24:33.639Z">
+<meta property="article:modified_time" content="2020-03-25T09:27:02.579Z">
 <meta property="article:author" content="wvyov">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://wvyov.me/image/jvm_memory.jpeg">
@@ -392,7 +392,7 @@
 <td></td>
 </tr>
 <tr>
-<td>-XX:HeapDumpPath=*<path>*</td>
+<td>-XX:HeapDumpPath=<em>path</em></td>
 <td>自动堆转储时，保存的文件名</td>
 <td></td>
 </tr>
