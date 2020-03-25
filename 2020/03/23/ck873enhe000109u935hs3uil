@@ -82,7 +82,7 @@
 <meta name="description" content="JDK 8 参数设置内存区域设置：    参数 含义 说明    -XmsN 堆空间初始值 默认值取决于：OS、Memory、JVM 等   -XmxN 堆空间最大值 默认值取决于：OS、Memory、JVM 等   -Xss&#x3D;N 线程栈大小    -XX:NewSize&#x3D;N 新生代空间初始值    -XX:MaxNewSize&#x3D; N 新生代空间最大值    -XmnN 同时设置 NewSize">
 <meta property="og:type" content="article">
 <meta property="og:title" content="笔记 - JVM GC">
-<meta property="og:url" content="http://wvyov.me/2020/03/jvm_gc_note/index.html">
+<meta property="og:url" content="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil">
 <meta property="og:site_name" content="无有的小书屋">
 <meta property="og:description" content="JDK 8 参数设置内存区域设置：    参数 含义 说明    -XmsN 堆空间初始值 默认值取决于：OS、Memory、JVM 等   -XmxN 堆空间最大值 默认值取决于：OS、Memory、JVM 等   -Xss&#x3D;N 线程栈大小    -XX:NewSize&#x3D;N 新生代空间初始值    -XX:MaxNewSize&#x3D; N 新生代空间最大值    -XmnN 同时设置 NewSize">
 <meta property="og:image" content="http://wvyov.me/image/jvm_memory.jpeg">
@@ -121,7 +121,7 @@
 
 
 
-  <link rel="canonical" href="http://wvyov.me/2020/03/jvm_gc_note/"/>
+  <link rel="canonical" href="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil"/>
 
 
 
@@ -234,7 +234,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2020/03/jvm_gc_note/">
+    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2020/03/23/ck873enhe000109u935hs3uil">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wvyov">
