@@ -88,7 +88,7 @@
 <meta property="og:image" content="http://wvyov.me/image/jvm_memory.jpeg">
 <meta property="og:image" content="http://wvyov.me/image/object_allocation.jpeg">
 <meta property="article:published_time" content="2020-03-23T02:36:10.000Z">
-<meta property="article:modified_time" content="2020-03-25T09:27:02.579Z">
+<meta property="article:modified_time" content="2020-03-25T09:28:04.264Z">
 <meta property="article:author" content="wvyov">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://wvyov.me/image/jvm_memory.jpeg">
@@ -617,7 +617,7 @@
 <td>jmap -histo <em>pid</em></td>
 </tr>
 <tr>
-<td>-dump:<dump-options></td>
+<td>-dump:<em>dump-options</em></td>
 <td>导出 JVM 内存信息,</td>
 <td>jmap -dump:live,format=b,file=<em>heap.hprof</em> <em>pid</em></td>
 </tr>
