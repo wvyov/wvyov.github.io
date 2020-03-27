@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="topic: 复制、哨兵、集群 复制 异步&#x2F;同步？全量&#x2F;增量？ redis 采用异步复制。 旧版（&lt; 2.8）初次复制、断联后复制都只能全量复制，新版（&gt; 2.8）支持初次全量复制、断联后增量复制。 通过 salveof 命令，让一台 redis 服务器（savle）复制另一台 redis 服务器（master）。 旧版复制（&lt; 2.8）： 两个阶段：  同步（sync）：将从服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笔记 - Redis">
+<meta property="og:url" content="http://wvyov.me/2019/12/redis_note/index.html">
+<meta property="og:site_name" content="无有的小书屋">
+<meta property="og:description" content="topic: 复制、哨兵、集群 复制 异步&#x2F;同步？全量&#x2F;增量？ redis 采用异步复制。 旧版（&lt; 2.8）初次复制、断联后复制都只能全量复制，新版（&gt; 2.8）支持初次全量复制、断联后增量复制。 通过 salveof 命令，让一台 redis 服务器（savle）复制另一台 redis 服务器（master）。 旧版复制（&lt; 2.8）： 两个阶段：  同步（sync）：将从服">
+<meta property="article:published_time" content="2019-12-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-03-27T20:48:44.984Z">
+<meta property="article:author" content="wvyov">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wvyov.me/2019/12/redis_note/"/>
+
+
+
+
+
+  <title>笔记 - Redis | 无有的小书屋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无有的小书屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2019/12/redis_note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wvyov">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无有的小书屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">笔记 - Redis</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-25T00:00:00+08:00">
+                2019-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>topic: 复制、哨兵、集群</p>
+<h3 id="复制">复制</h3>
+<p>异步/同步？全量/增量？</p>
+<p>redis 采用异步复制。</p>
+<p>旧版（&lt; 2.8）初次复制、断联后复制都只能全量复制，新版（&gt; 2.8）支持初次全量复制、断联后增量复制。</p>
+<p>通过 salveof 命令，让一台 redis 服务器（savle）复制另一台 redis 服务器（master）。</p>
+<p><em>旧版复制（&lt; 2.8）</em>：</p>
+<p>两个阶段：</p>
+<ul>
+<li>同步（sync）：将从服务器的数据库状态更新至主服务器当前所处的数据库状态。</li>
+<li>命令传播（command propagate）：在主服务器的数据库状态被修改，导致主从服务器的数据库状态出现不一致时，让主从服务器的数据库重新回到一致状态。</li>
+</ul>
+<p>同步：</p>
+<ol type="1">
+<li>slave 向 master 发送 sync。</li>
+<li>master 收到 sync 命令之后，执行 bgsave，后台生成 rdb 文件，并创建一个缓冲区记录从现在开始执行的写命令。</li>
+<li>当 bgsave 执行完成之后，master 将 rdb 文件发送给 slave。</li>
+<li>slave 收到 rdb 文件，更新数据库状态至 master 执行 bgsave 时的数据库状态。</li>
+<li>master 将记录在缓冲区的写命令发送给 slave。savle 执行这些写命令。</li>
+</ol>
+<p>命令传播：</p>
+<p>master 持续地将 写命令同步给 slave。</p>
+<p><em>新版复制（&gt; 2.8）</em>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PSYNC &lt;MASTER_RUN_ID&gt; &lt;OFFSET&gt;</span><br></pre></td></tr></table></figure>
+<p>新版使用 psync 同步。psync 具有完整重同步（full resynchronization）、部分重同步（partialresynchronization）两种模式。</p>
+<p>完整重同步与 sync 命令执行的同步一样。</p>
+<p>部分重同步：</p>
+<p>复制偏移量（replication offset）：</p>
+<p>master、slave 分别维护一个复制偏移量（replication offset）。</p>
+<ul>
+<li>master 向 slave 发送 n 个字节的数据，就将自己的复制偏移量 +n。</li>
+<li>slave 收到 master 发送的 n 个字节的数据，就将自己的复制偏移量 +n。</li>
+</ul>
+<p>复制积压缓冲区（replication backlog）：</p>
+<p>存在于 master。</p>
+<p>是一个固定长度（fixed-size）的 FIFO 队列，默认 1MB。</p>
+<p>当 master 进行命令传播时，不仅会将命令发送给各个 slave，还会将命令入队到复制积压缓冲区中。并且，复制积压缓冲区会记录队列中每个字节相应的复制偏移量。</p>
+<p>当 slave 重新连上 master时，slave 会通过 psync 将自己的复制偏移量发送给 master。master 会根据接收到复制偏移量来决定如何操作：</p>
+<ul>
+<li>如果 offset 之后的数据仍然在复制积压缓冲区中，则执行部分重同步。</li>
+<li>如果 offset 之后的数据已经不存在复制积压缓冲区中，则执行完整重同步。</li>
+</ul>
+<p>run ID：</p>
+<p>每个服务器都有自己的 runId。runId 在服务器启动时生成，由 40 个随机的 16 进制字符构成。</p>
+<p>当 slave 初次连接 master 时，master 会将 runId 发送给 slave，slave 会保存 master 的runId。</p>
+<p>当 slave 断连后重新连上 master 时，向 master 发送之前保存的 runId，对 master 来说：</p>
+<ul>
+<li>如果从 slave 接收的 runId，与当前的 runId 相同，则继续尝试执行部分重同步操作。</li>
+<li>如果从 slave 接收的 runId，与当前的 runId 不同，则执行完整重同步操作。</li>
+</ul>
+<p><em>心跳检测</em>：</p>
+<p>在命令传播阶段，slave 会以每秒一次的频率，向 master 发送 REPLCONF ACK 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REPLCONF ACK &lt;replication_offset&gt;</span><br></pre></td></tr></table></figure>
+<p>作用：</p>
+<ul>
+<li>检测 master、slave 之间的网络连接状态。向 master 发送命令 INFO replication 可以看到复制的详细信息。</li>
+<li>辅助实现 min-slaves 配置选项。Redis 的 min-slaves-to-write 和 min-slaves-max-lag 两个选项可以防止主服务器在不安全的情况下执行写命令。lag（延迟）。</li>
+<li>检测命令丢失。slave 主动向 master 发送 replication_offset，便于 master 了解 slave 复制到进度。</li>
+</ul>
+<h3 id="哨兵sentinel">哨兵（Sentinel）</h3>
+<p>由一个或多个 Sentinel 实例（instance）组成的 Sentinel 系统（system）监视任意多个 master（主服务器），以及这些 master 属下的所有 slave（从服务器），并在被监视的 master 下线时，自动将其对应的某个 slave 升级为新的 master。</p>
+<p>自动发现 Sentinel 和从服务器：</p>
+<p>从配置中获取要监视的 master。</p>
+<p>启动之后，向 master 发送命令获取其所有的 slave，并监视这些 slave。</p>
+<p>并与这些 master、slave 建立发布订阅频道，通过这个频道获取其他监视同一个机器的 sentinel 实例。</p>
+<p>主观/客观下线：</p>
+<p>主观下线：单个 sentinel 实例对服务器作出的下线判断。</p>
+<p>客观下线：sentinel 实例收到了足够数量（sentinel 配置）的其他 sentinel 实例，对服务器作出的主观下线判断。仅适用于 master，其他类型 redis 实例下线不需要沟通。</p>
+<p>主观下线判断逻辑：</p>
+<p>如果一个服务器没有在 master-down-after-milliseconds 选项指定的时间内， 对向它发送 PING 命令的 sentinel 返回一个有效回复（valid reply）， 那么 sentinel 就会将这个服务器标记为主观下线。</p>
+<p>对 PING 的有效回复（valid reply）是一下三种之一：+PONG；-LOADING 错误；-MASTERDOWN` 错误。</p>
+<p>故障转移：</p>
+<p>一次故障转移操作由以下步骤组成：</p>
+<ul>
+<li>发现主服务器已经进入客观下线状态。</li>
+<li>对我们的当前纪元进行自增， 并尝试在这个纪元中当选（Raft leader 选举）。</li>
+<li>如果当选失败， 那么在设定的故障迁移超时时间的两倍之后， 重新尝试当选。 如果当选成功， 那么执行以下步骤。</li>
+<li>选出一个从服务器，并将它升级为主服务器。</li>
+<li>向被选中的从服务器发送 <code>SLAVEOF NO ONE</code> 命令，让它转变为主服务器。</li>
+<li>通过发布与订阅功能， 将更新后的配置传播给所有其他 Sentinel ， 其他 Sentinel 对它们自己的配置进行更新。</li>
+<li>向已下线主服务器的从服务器发送 SLAVEOF 命令， 让它们去复制新的主服务器。</li>
+<li>当所有从服务器都已经开始复制新的主服务器时， 领头 Sentinel 终止这次故障迁移操作。</li>
+</ul>
+<p>sentinel leader 选举：</p>
+<ul>
+<li>每次选举之后，无论是否成功，所有 sentinel 的配置纪元都会自增。</li>
+<li>在一个配置纪元内，每个 sentinel 只能投票一次。</li>
+<li>sentinel 会把票投给第一个要求投票的 sentinel。</li>
+<li>每个发现 master 客观下线的 sentinel，都会要求其他 sentinel 投票给自己。</li>
+<li>如果有超过半数的 sentinel 获得投票，则其成为 leader。</li>
+<li>如果在特定时间内，没有 sentinel 成为 leader，则将在一段时间之后，再次投票。</li>
+</ul>
+<p>slave -&gt; master 规则：</p>
+<ul>
+<li>已被标记主观下线、已断连或最后一次响应 PING 的时间大于 5s 的 slave 都会被淘汰。</li>
+<li>与 master 断连超过 down-after 选项指定时长十倍的 slave 都会被淘汰。</li>
+<li>从上面淘汰后的 slave 中，复制偏移量最大的成为 master。如果不可用，或复制偏移量相同，则最小 runId 的成为 master。</li>
+</ul>
+<h3 id="集群">集群</h3>
+<p>需要配置 cluster-enabled 选项，开启后，启动时将以集群模式启动。</p>
+<p><em>建立集群</em>：</p>
+<p>利用 CLUSTER MEET 命令，发现其他节点。发现后，仅通过 gossip 协议进行节点信息（包括节点状态、hash 槽指派等信息）交换。</p>
+<p><em>槽指派</em>：</p>
+<p>采用 hash 槽（共 16384 个槽），利用 CRC16(key) &amp; 16383 (0x3ff) 算法，将键分布在不同的 hash 槽中。键在集群中节点上的分布，需要利用 CLUSTER ADDSLOTS 进行槽指派。</p>
+<p><em>命令执行</em>：</p>
+<p>在客户端向集群中某个节点发送命令时，如果节点发现该键所在的槽，不由自己负责，将响应 MOVED 错误，指引客户端转向正确的节点。</p>
+<p><em>重新分片</em>：</p>
+<p>可以在线（online）执行重新分片操作，让 hash 槽从源节点转移至目标节点。redis-trib 提供了重新分片所需的所有指令。</p>
+<p>对单个 hash 槽（slot）重新分片的步骤：</p>
+<ol type="1">
+<li>对目标节点发送指令，让目标节点准备好从源节点导入属于 slot 的键值对数据。CLUSTER SETSLOT＜slot＞IMPORTING＜source_id＞</li>
+<li>对源节点发送指令，让源节点准备好将属于 slot 的键值对数据导出到 目标节点。CLUSTER SETSLOT＜slot＞MIGRATING＜target_id＞</li>
+<li>从源节点获取最多 count 个属于 slot 的键值对。CLUSTER GETKEYSINSLOT＜slot＞＜count＞</li>
+<li>对于 3 中每个键，向源节点发送指令，将单个键原子性的迁移至目标节点。MIGRATE＜target_ip＞＜target_port＞＜key_name＞0＜timeout＞</li>
+<li>重复执行 3、4，直到该 slot 全部迁移完成。</li>
+<li>向集群中任意节点发送该重新分片的指派信息，最终该信息会通过 gossip 协议发送至整个集群。CLUSTER SETSLOT＜slot＞NODE＜target_id＞</li>
+</ol>
+<p>如果有多个 hash 槽，重复进行上述步骤。</p>
+<p><em>复制与故障转移</em>：</p>
+<p>复制：</p>
+<p>集群启动后，通过 CLUSTER REPLICATE <node_id> 命令让接收命令的节点成为 <node_id> 的 slave（从节点），并在集群中传播该消息。</p>
+<p>故障发现：</p>
+<p>集权中每个节点会定期向其他节点发送 PING 消息，如果其他节点没有在特定时限内响应 PONG 消息，那么就会将此节点标记为疑似下线。</p>
+<p>集群中各个节点会相互交换消息，如果超过一半的节点，都标记某个节点的状态为疑似下线，则该节点会被标记为已下线。并在集群中传播该消息。</p>
+<p>故障恢复：</p>
+<p>当一个 slave 发现自己的 master 节点处于已下线状态：</p>
+<ul>
+<li>该 master 的所有 slave 中会有一个通过选举成为新的 master。</li>
+<li>被选中的 slave 执行 SLAVEOF no one，成为新的 master。</li>
+<li>撤销所有对之前 mster 的槽指派，重新指向自己。</li>
+<li>在集群中传播这些信息。</li>
+</ul>
+<p>选举算法 sentinel 的选举类似。由 slave 发起，所有未故障的 master 参与投票，赢得半数以上的投票，则赢得选举；若未有 slave 赢得选举，则超时等待后，继续下一轮投票。</p>
+<h3 id="reference">Reference</h3>
+<ul>
+<li><p>Redis 命令参考：http://doc.redisfans.com/</p></li>
+<li><p>Redis 命令参考：http://redisdoc.com/</p></li>
+<li><p>《Redis 设计与实现》</p></li>
+<li><p>《Redis官方文档》用Redis构建分布式锁：http://ifeve.com/redis-lock/</p></li>
+<li><p>基于Redis的分布式锁到底安全吗（上）？：http://zhangtielei.com/posts/blog-redlock-reasoning.html</p></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    wvyov
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://wvyov.me/2019/12/redis_note/" title="笔记 - Redis">http://wvyov.me/2019/12/redis_note/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/kafka_note/" rel="next" title="笔记 - Kafka">
+                <i class="fa fa-chevron-left"></i> 笔记 - Kafka
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/jvm_gc_note/" rel="prev" title="笔记 - JVM GC">
+                笔记 - JVM GC <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wvyov</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#复制"><span class="nav-number">1.</span> <span class="nav-text">复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵sentinel"><span class="nav-number">2.</span> <span class="nav-text">哨兵（Sentinel）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群"><span class="nav-number">3.</span> <span class="nav-text">集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wvyov</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

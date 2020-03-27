@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="形式语言," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="字母表、字符串： 字母表 \(\Sigma\) 为任意有限个字符的集合。 字符串 是字母表 \(\Sigma\) 中元素构成的有限序列。 字符串的长度等于序列的长度。特别的，长度为 0 的字符串，被称为空串，记为 \(\epsilon\)。 语言： 记，字母表 \(\Sigma\) 上，所有长度为 \(n\) 的字符串所组成的集合，为 \(\Sigma^{n}\)。特别的，记 \(\{\epsil">
+<meta property="og:type" content="article">
+<meta property="og:title" content="形式语言">
+<meta property="og:url" content="http://wvyov.me/2018/08/formal_language/index.html">
+<meta property="og:site_name" content="无有的小书屋">
+<meta property="og:description" content="字母表、字符串： 字母表 \(\Sigma\) 为任意有限个字符的集合。 字符串 是字母表 \(\Sigma\) 中元素构成的有限序列。 字符串的长度等于序列的长度。特别的，长度为 0 的字符串，被称为空串，记为 \(\epsilon\)。 语言： 记，字母表 \(\Sigma\) 上，所有长度为 \(n\) 的字符串所组成的集合，为 \(\Sigma^{n}\)。特别的，记 \(\{\epsil">
+<meta property="article:published_time" content="2018-07-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2018-08-19T16:00:00.000Z">
+<meta property="article:author" content="wvyov">
+<meta property="article:tag" content="形式语言">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wvyov.me/2018/08/formal_language/"/>
+
+
+
+
+
+  <title>形式语言 | 无有的小书屋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无有的小书屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2018/08/formal_language/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wvyov">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无有的小书屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">形式语言</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T00:00:00+08:00">
+                2018-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/" itemprop="url" rel="index">
+                    <span itemprop="name">theory</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/language/" itemprop="url" rel="index">
+                    <span itemprop="name">language</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>字母表、字符串：</p>
+<p><strong><em>字母表</em></strong> <span class="math inline">\(\Sigma\)</span> 为任意有限个字符的集合。<br />
+<strong><em>字符串</em></strong> 是字母表 <span class="math inline">\(\Sigma\)</span> 中元素构成的有限序列。<br />
+字符串的<strong>长度</strong>等于序列的长度。特别的，长度为 0 的字符串，被称为<strong>空串</strong>，记为 <span class="math inline">\(\epsilon\)</span>。</p>
+<p>语言：</p>
+<p>记，字母表 <span class="math inline">\(\Sigma\)</span> 上，所有长度为 <span class="math inline">\(n\)</span> 的字符串所组成的集合，为 <span class="math inline">\(\Sigma^{n}\)</span>。特别的，记 <span class="math inline">\(\{\epsilon\}\)</span> 为 <span class="math inline">\(\Sigma^{0}\)</span>。<br />
+记，<span class="math inline">\(\Sigma^{*} = \Sigma^{0} \cup \Sigma^{1} \cup \Sigma^{2} \cup \cdots\)</span> 。则，<span class="math inline">\(\Sigma^{*}\)</span> 为字母表 <span class="math inline">\(\Sigma\)</span> 上所有字符串所组成的集合，也即，<span class="math inline">\(\Sigma\)</span> 的 Kleene 闭包。<br />
+另，记，<span class="math inline">\(\Sigma^{+} = \Sigma^{1} \cup \Sigma^{2} \cup \cdots\)</span><br />
+字母表上的 <strong><em>语言</em></strong>（记为 <span class="math inline">\(L\)</span>），是 <span class="math inline">\(\Sigma^{*}\)</span> 的任意子集。<br />
+需要注意的是，<span class="math inline">\(\Sigma^{*}\)</span> 的空子集 <span class="math inline">\(\emptyset\)</span> 与 <span class="math inline">\(\Sigma^{0}\)</span>（即，<span class="math inline">\(\epsilon\)</span>） 是 两种不同的语言。</p>
+<p>语言上的运算：</p>
+<p>字符串间的运算，即，定义在语言 <span class="math inline">\(L\)</span> 上的运算。<br />
+<strong><em>连接</em></strong> 运算：$s_{1}s_{2} $ 且 <span class="math inline">\(s_{1} \in, s_{2} \in L\)</span> ，定义为两个字符串首尾相连。</p>
+<p>语言间运算：</p>
+<p>由于语言是 <span class="math inline">\(\Sigma^{*}\)</span> 的任意子集，所以语言间的运算，就是定义在 <span class="math inline">\(\Sigma^{*}\)</span> 的幂集上的运算。</p>
+<ol type="1">
+<li><p>交、并、补运算。</p></li>
+<li><p>连接运算。<br />
+<span class="math inline">\(L_{1}L_{2} = \{s_{1}s_{2} | s_{1} \in L_{1}, s_{2} \in L_{2} \}\)</span></p></li>
+<li><p>幂运算。<br />
+<span class="math inline">\(L^{n}\)</span>，<span class="math inline">\(n\)</span> 个 <span class="math inline">\(L\)</span> 相连接。</p></li>
+<li><p>闭包运算。<br />
+<span class="math inline">\(L^{*} = L_{0} \cup L_{1} \cdots\)</span> 。</p></li>
+<li><p>补运算。<br />
+设，语言 <span class="math inline">\(L \subseteq \Sigma^{*}\)</span> ，则 <span class="math inline">\(L\)</span> 的补语言定义为 <span class="math inline">\(\{s | s \in \Sigma^{*}, s \notin L \}\)</span> 。</p></li>
+</ol>
+<p>语言的表示（<em>自</em>）：</p>
+<ol type="1">
+<li><p>形式文法<br />
+构造的。给定"产生式规则"集，从特定符号开始，不断地应用"产生式规则"，所有可以被构造出的字符串组成的集合，构成了一种语言。<br />
+或，描述了特定语言的文法结构。</p></li>
+<li><p>自动机<br />
+判定的。给定状态集及转移函数，通过接收输入字符串，不断地进行状态转移，所有可以使自动机最终处在终止状态的语言所组成的集合，构成了一种语言。</p></li>
+<li><p>正则语言<br />
+描述的。给定描述规则（正则表达式），构造特定“表达式”，所有可以被特定“表达式”描述的字符串所组成的集合，构成了一种语言。 注：所有可以被正则表达式描述的语言，称为正则语言。</p></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    wvyov
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://wvyov.me/2018/08/formal_language/" title="形式语言">http://wvyov.me/2018/08/formal_language/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80/" rel="tag"># 形式语言</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/formal_grammar/" rel="prev" title="形式文法">
+                形式文法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wvyov</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wvyov</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

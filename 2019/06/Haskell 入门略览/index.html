@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="函数式听闻  lambda 表达式 柯里化 纯函数、副作用、引用透明 类型推断 模式匹配 代数数据类型 函数是一等公民 惰性求值  等等 Hello Hello World 12- Helloworld.hsmain &#x3D; putStrLn &quot;Hello, World!&quot; run: 1runghc HelloWord.hs 表达式 数字表达式 Num 123456&gt; 1 + 2 * 37&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Haskell 入门略览">
+<meta property="og:url" content="http://wvyov.me/2019/06/Haskell%20%E5%85%A5%E9%97%A8%E7%95%A5%E8%A7%88/index.html">
+<meta property="og:site_name" content="无有的小书屋">
+<meta property="og:description" content="函数式听闻  lambda 表达式 柯里化 纯函数、副作用、引用透明 类型推断 模式匹配 代数数据类型 函数是一等公民 惰性求值  等等 Hello Hello World 12- Helloworld.hsmain &#x3D; putStrLn &quot;Hello, World!&quot; run: 1runghc HelloWord.hs 表达式 数字表达式 Num 123456&gt; 1 + 2 * 37&amp;gt">
+<meta property="article:published_time" content="2019-06-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-03-27T20:17:42.314Z">
+<meta property="article:author" content="wvyov">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wvyov.me/2019/06/Haskell 入门略览/"/>
+
+
+
+
+
+  <title>Haskell 入门略览 | 无有的小书屋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无有的小书屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wvyov.me/2019/06/Haskell%20%E5%85%A5%E9%97%A8%E7%95%A5%E8%A7%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wvyov">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无有的小书屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Haskell 入门略览</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T00:00:00+08:00">
+                2019-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/language/" itemprop="url" rel="index">
+                    <span itemprop="name">language</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="函数式听闻">函数式听闻</h3>
+<ul>
+<li>lambda 表达式</li>
+<li>柯里化</li>
+<li>纯函数、副作用、引用透明</li>
+<li>类型推断</li>
+<li>模式匹配</li>
+<li>代数数据类型</li>
+<li>函数是一等公民</li>
+<li>惰性求值</li>
+</ul>
+<p>等等</p>
+<h3 id="hello">Hello</h3>
+<p>Hello World</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- <span class="type">Helloworld</span>.hs</span><br><span class="line"><span class="title">main</span> = putStrLn <span class="string">"Hello, World!"</span></span><br></pre></td></tr></table></figure>
+<p>run:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">runghc HelloWord.hs</span><br></pre></td></tr></table></figure>
+<h3 id="表达式">表达式</h3>
+<p>数字表达式</p>
+<p><code>Num</code></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="number">1</span> + <span class="number">2</span> * <span class="number">3</span></span><br><span class="line"><span class="number">7</span></span><br><span class="line">&gt; <span class="number">3</span> / <span class="number">2</span> - <span class="number">1</span></span><br><span class="line"><span class="number">0.5</span></span><br><span class="line">&gt; <span class="number">3</span> `mod` <span class="number">2</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>布尔表达式</p>
+<p><code>Bool</code></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="type">True</span> &amp;&amp; <span class="type">False</span></span><br><span class="line"><span class="type">True</span></span><br><span class="line">&gt; <span class="type">False</span> || <span class="type">True</span></span><br><span class="line"><span class="type">True</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>字符串表达式</p>
+<p><code>String</code></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; '<span class="number">1</span>' : <span class="string">"23"</span></span><br><span class="line"><span class="string">"123"</span></span><br><span class="line">&gt; <span class="string">"123"</span> ++ <span class="string">"456"</span></span><br></pre></td></tr></table></figure>
+<p>相等性测试</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; (<span class="number">1</span> + <span class="number">2</span> - <span class="number">3</span>) * <span class="number">2</span> == <span class="number">0</span></span><br><span class="line"><span class="type">True</span></span><br><span class="line">&gt; <span class="type">True</span> == <span class="type">False</span></span><br><span class="line"><span class="type">False</span></span><br><span class="line">&gt; <span class="string">"123"</span> == <span class="string">"123"</span></span><br><span class="line"><span class="type">True</span></span><br></pre></td></tr></table></figure>
+<p>条件表达式</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">if</span> <span class="type">True</span> || <span class="type">False</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">2</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line">&gt; <span class="keyword">if</span> <span class="type">True</span> &amp;&amp; <span class="type">False</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">2</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>以上所有表达式都有严格的类型限定</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="number">1</span> + '<span class="number">1</span>'</span><br><span class="line"></span><br><span class="line">&lt;interactive&gt;:<span class="number">36</span>:<span class="number">1</span>: error:</span><br><span class="line">    • <span class="type">No</span> <span class="keyword">instance</span> for (<span class="type">Num</span> <span class="type">Char</span>) arising from a use <span class="keyword">of</span> ‘+’</span><br><span class="line">    • <span class="type">In</span> the expression: <span class="number">1</span> + '<span class="number">1</span>'</span><br><span class="line">      <span class="type">In</span> an equation for ‘it’: it = <span class="number">1</span> + '<span class="number">1</span>'</span><br></pre></td></tr></table></figure>
+<p>其他数据类型</p>
+<p>Tuple</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; (<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">&gt; (<span class="number">1</span>, <span class="type">True</span>)</span><br><span class="line">&gt; (<span class="number">1</span>, <span class="type">True</span>, 'false')</span><br></pre></td></tr></table></figure>
+<p>List</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; [<span class="number">123</span>, <span class="number">456</span>]</span><br><span class="line">&gt; <span class="string">"123"</span></span><br><span class="line">&gt; [<span class="number">1</span>,<span class="number">2</span>] ++ [<span class="number">3</span>,<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="类型">类型</h3>
+<p>上面的类型</p>
+<p>Int、Bool、String、[Char]、Tuple2、Tuple3、[Char]、[String]、[a]</p>
+<p><strong>类型别名</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- type String = [Char]</span></span><br><span class="line">&gt; :i <span class="type">String</span></span><br><span class="line"><span class="class"><span class="keyword">type</span> <span class="type">String</span> = [<span class="type">Char</span>]</span></span><br><span class="line"></span><br><span class="line">&gt; <span class="class"><span class="keyword">type</span> <span class="type">StrList</span> = [<span class="type">String</span>]</span></span><br><span class="line">&gt; :i <span class="type">StrList</span></span><br><span class="line"><span class="class"><span class="keyword">type</span> <span class="type">StrList</span> = [<span class="type">String</span>]</span></span><br></pre></td></tr></table></figure>
+<p><strong>函数类型</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="title">add</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br><span class="line"><span class="title">add</span> x y = x + y</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :t add</span><br><span class="line"><span class="title">add</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br></pre></td></tr></table></figure>
+<p><strong>类型类</strong></p>
+<p>Eq</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :t (==)</span><br><span class="line">(==) :: <span class="type">Eq</span> a =&gt; a -&gt; a -&gt; <span class="type">Bool</span></span><br></pre></td></tr></table></figure>
+<p>Ord</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :t (&gt;)</span><br><span class="line">(&gt;) :: <span class="type">Ord</span> a =&gt; a -&gt; a -&gt; <span class="type">Bool</span></span><br></pre></td></tr></table></figure>
+<p>Enum</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 皮亚诺公理</span></span><br><span class="line">&gt; :t (succ)</span><br><span class="line"><span class="title">succ</span> :: <span class="type">Enum</span> a =&gt; a -&gt; a</span><br></pre></td></tr></table></figure>
+<p>Show</p>
+<p>可显示类</p>
+<h3 id="函数">函数</h3>
+<p>函数定义</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="title">add</span> :: (<span class="type">Int</span>, <span class="type">Int</span>) -&gt; <span class="type">Int</span></span><br><span class="line"><span class="title">add</span> (x, y) =&gt; x + y</span><br><span class="line"></span><br><span class="line"><span class="title">plus</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br><span class="line"><span class="title">plus</span> x y = x + y</span><br></pre></td></tr></table></figure>
+<p>特别地，id 函数</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i id</span><br><span class="line"><span class="title">id</span> :: a -&gt; a 	<span class="comment">-- Defined in ‘GHC.Base’</span></span><br></pre></td></tr></table></figure>
+<p><strong>函数的类型</strong></p>
+<p>add</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :t add</span><br><span class="line"><span class="title">add</span> :: (<span class="type">Int</span>, <span class="type">Int</span>) -&gt; <span class="type">Int</span></span><br></pre></td></tr></table></figure>
+<p>plus</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; :t plus</span><br><span class="line"><span class="title">plus</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br><span class="line">&gt; <span class="keyword">let</span> plus_5 = plus <span class="number">5</span></span><br><span class="line"><span class="title">plus</span> <span class="number">5</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br><span class="line">&gt; :t plus_5</span><br><span class="line"><span class="title">plus_5</span> :: <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br></pre></td></tr></table></figure>
+<p><strong>柯里化</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">let</span> curry_add = curry add</span><br><span class="line">&gt; :t curry_add</span><br><span class="line"><span class="title">curry</span> add :: <span class="type">Int</span> -&gt; <span class="type">Int</span> -&gt; <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">&gt; :i curry</span><br><span class="line"><span class="title">curry</span> :: ((a, b) -&gt; c) -&gt; a -&gt; b -&gt; c 	<span class="comment">-- Defined in ‘Data.Tuple’</span></span><br></pre></td></tr></table></figure>
+<p><strong>逆柯里化</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">let</span> uncurry_add = uncurry add</span><br><span class="line">&gt; :t uncurry_add</span><br><span class="line"><span class="title">uncurry</span> add :: (<span class="type">Int</span>, <span class="type">Int</span>) -&gt; <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">&gt; :i uncurry</span><br><span class="line"><span class="title">uncurry</span> :: (a -&gt; b -&gt; c) -&gt; (a, b) -&gt; c 	<span class="comment">-- Defined in ‘Data.Tuple’</span></span><br></pre></td></tr></table></figure>
+<h3 id="lambda-表达式"><span class="math inline">\(\lambda\)</span> 表达式</h3>
+<p><strong>基本形式</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">let</span> f = (\x -&gt; \y -&gt; x + y)</span><br><span class="line">&gt; :t f</span><br><span class="line">(\x -&gt; \y -&gt; x + y) :: <span class="type">Num</span> a =&gt; a -&gt; a -&gt; a</span><br><span class="line"></span><br><span class="line">&gt; :t (f <span class="number">1</span>)</span><br><span class="line">(f <span class="number">1</span>) :: <span class="type">Num</span> a =&gt; a -&gt; a</span><br><span class="line"></span><br><span class="line">&gt; f <span class="number">1</span> <span class="number">2</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> :t (\x y -&gt; x + y)</span><br><span class="line">(\x y -&gt; x + y) :: <span class="type">Num</span> a =&gt; a -&gt; a -&gt; a</span><br></pre></td></tr></table></figure>
+<h4 id="lambda-演算"><span class="math inline">\(\lambda\)</span> 演算</h4>
+<p><strong><span class="math inline">\(\alpha\)</span> 替换</strong></p>
+<p>在不出现命名冲突的前提下，将函数参数重新命名 <span class="math display">\[
+\lambda x \rightarrow M \equiv_{\alpha}  \lambda y \rightarrow [y/x]M
+\]</span> 举例：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\x -&gt; \y -&gt; x + y</span><br><span class="line"><span class="comment">-- alpha 等价</span></span><br><span class="line">\a -&gt; \b -&gt; a + b</span><br></pre></td></tr></table></figure>
+<p>拓展：自由变量、约束变量</p>
+<p><strong><span class="math inline">\(\beta\)</span> 化简</strong></p>
+<p>将参数替换到函数体。（求值） <span class="math display">\[
+(\lambda x \rightarrow M) \, N \equiv_{\beta}  [N/x]M )
+\]</span> 举例：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(\x -&gt; x + <span class="number">2</span>) <span class="number">1</span></span><br><span class="line"><span class="comment">-- beta 等价</span></span><br><span class="line"><span class="number">1</span> + <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><strong><span class="math inline">\(\eta\)</span> 规约</strong></p>
+<p>简化表达式，消去冗余变量 <span class="math display">\[
+\lambda x \rightarrow f x \equiv_{eta} f
+\]</span> 举例：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">let</span> f_eta = \x -&gt; \y -&gt; x + y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">\x -&gt; f x</span><br><span class="line"><span class="comment">-- eta 等价</span></span><br><span class="line"><span class="title">f</span></span><br></pre></td></tr></table></figure>
+<h4 id="应用">应用</h4>
+<p><strong>列表表达式</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 直角三角形</span></span><br><span class="line">&gt; [(x, y, z) | x &lt;- [<span class="number">1.</span><span class="number">.20</span>], y &lt;- [x.<span class="number">.20</span>], z &lt;- [y.<span class="number">.20</span>], x^<span class="number">2</span> + y^<span class="number">2</span> == z^<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>快速排序</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="title">quick_sort</span> :: <span class="type">Ord</span> a =&gt; [a] -&gt; [a]</span><br><span class="line"><span class="title">quick_sort</span> [] = []</span><br><span class="line"><span class="title">quick_sort</span> (a : tail) =</span><br><span class="line">  <span class="keyword">let</span> smaller_sorted = quick_sort [x | x &lt;- tail, x &lt; a]</span><br><span class="line">      bigger_sorted = quick_sort [x | x &lt;- tail, x &gt; a]</span><br><span class="line">  <span class="keyword">in</span> smaller_sorted ++ [a] ++ bigger_sorted</span><br></pre></td></tr></table></figure>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; quick_sort [<span class="number">3</span>, <span class="number">2</span>,<span class="number">6</span>,<span class="number">1</span>,<span class="number">23</span>,<span class="number">6</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">6</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">5</span>]</span><br><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">23</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="拓展可选">拓展(可选)</h4>
+<p>邱奇数(church number)</p>
+<p>0, 对应 <span class="math inline">\(\lambda f.\lambda x. x\)</span></p>
+<p>succ, 对应 <span class="math inline">\(\lambda n.\lambda f.\lambda x. f (n f x)\)</span></p>
+<p>1, 对应 <span class="math inline">\(\lambda f.\lambda x. f x\)</span> $$ <span class="math display">\[\begin{align*}
+(\lambda n.\lambda f.\lambda x. f (n f x))   (\lambda f.\lambda x. x)  
+&amp;= \lambda f.\lambda x. f ((\lambda f.\lambda x. x) f x) \\
+&amp;= \lambda f.\lambda x. f x
+
+
+\end{align*}\]</span> $$</p>
+<p>邱奇数定义</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#123;-# LANGUAGE RankNTypes #-&#125;</span></span><br><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- ghci</span></span><br><span class="line"><span class="comment">-- :set -XRankNTypes</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">type</span> <span class="type">Church</span> = forall t.(<span class="title">t</span> -&gt; <span class="title">t</span>) -&gt; t -&gt; t</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 邱奇数 0</span></span><br><span class="line"><span class="title">church_zero</span> :: <span class="type">Church</span></span><br><span class="line"><span class="title">church_zero</span> = \f -&gt; \x -&gt; x</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 邱奇, 后继函数</span></span><br><span class="line"><span class="title">church_succ</span> :: <span class="type">Church</span> -&gt; <span class="type">Church</span></span><br><span class="line"><span class="title">church_succ</span> ch = \f -&gt; \x -&gt; f (ch f x)</span><br></pre></td></tr></table></figure>
+<p>邱奇编码</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="title">church_encoding</span> :: <span class="type">Int</span> -&gt; <span class="type">Church</span></span><br><span class="line"><span class="title">church_encoding</span> <span class="number">0</span> = church_zero</span><br><span class="line"><span class="title">church_encoding</span> n = church_succ (church_encoding (n - <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<p>邱奇数到自然数</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Share.hs</span></span><br><span class="line"></span><br><span class="line"><span class="title">church_decoding</span> :: <span class="type">Church</span> -&gt; <span class="type">Int</span></span><br><span class="line"><span class="title">church_decoding</span> ch = ch (\x -&gt; x + <span class="number">1</span>) <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>举例：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&gt; church_succ church_zero</span><br><span class="line"><span class="title">church_succ</span> church_zero :: (t -&gt; t) -&gt; t -&gt; t</span><br><span class="line">&gt; church_succ (church_succ church_zero)</span><br><span class="line"><span class="title">church_succ</span> (church_succ church_zero) :: (t -&gt; t) -&gt; t -&gt; t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt; church_encoding <span class="number">3</span></span><br><span class="line"><span class="title">church_encoding</span> <span class="number">3</span> :: (t -&gt; t) -&gt; t -&gt; t</span><br><span class="line">&gt; church_encoding <span class="number">16</span></span><br><span class="line"><span class="title">church_encoding</span> <span class="number">16</span> :: (t -&gt; t) -&gt; t -&gt; t</span><br><span class="line"></span><br><span class="line">&gt; church_decoding church_zero</span><br><span class="line"><span class="number">0</span></span><br><span class="line">&gt; church_decoding (church_succ (church_succ church_zero))</span><br><span class="line"><span class="number">2</span></span><br><span class="line"></span><br><span class="line">&gt; church_decoding (church_encoding <span class="number">0</span>)</span><br><span class="line"><span class="number">0</span></span><br><span class="line">&gt; church_decoding (church_encoding <span class="number">2</span>)</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="代数数据类型">代数数据类型</h3>
+<p>模式匹配</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">num_to_bool</span> :: <span class="type">Int</span> -&gt; <span class="type">Bool</span></span><br><span class="line"></span><br><span class="line"><span class="title">num_to_bool</span> <span class="number">0</span> = <span class="type">False</span></span><br><span class="line"><span class="title">num_to_bool</span> <span class="number">1</span> = <span class="type">True</span></span><br><span class="line"><span class="title">num_to_bool</span> _ = <span class="type">True</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 仅仅为了举例</span></span><br><span class="line"><span class="title">num_and_length</span> :: [<span class="type">Int</span>] -&gt; <span class="type">Int</span></span><br><span class="line"><span class="title">num_and_length</span> (<span class="number">1</span> : []) = <span class="number">1</span> + <span class="number">0</span></span><br><span class="line"><span class="title">num_and_length</span> (<span class="number">2</span> : []) = <span class="number">2</span> + <span class="number">0</span></span><br><span class="line"><span class="title">num_and_length</span> _ = error <span class="string">"non match"</span></span><br></pre></td></tr></table></figure>
+<p>从上面可以看出，模式匹配是用值或值构造器来匹配的。</p>
+<h4 id="类型的定义">类型的定义</h4>
+<p><strong>枚举</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">OwnBool</span> = <span class="type">OwnTrue</span> | <span class="type">OwnFalse</span> <span class="keyword">deriving</span> (<span class="type">Show</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Unit</span> = <span class="type">Unit</span> <span class="keyword">deriving</span> (<span class="type">Show</span>)</span></span><br></pre></td></tr></table></figure>
+<p><strong>参数化类型</strong></p>
+<p>Option</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Option</span> a = <span class="type">None</span> | <span class="type">Some</span> a <span class="keyword">deriving</span> (<span class="type">Show</span>)</span></span><br></pre></td></tr></table></figure>
+<p>Pair</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Pair</span> a b = <span class="type">Pair</span> a b <span class="keyword">deriving</span> (<span class="type">Show</span>)</span></span><br></pre></td></tr></table></figure>
+<p>OwnEither</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">OwnEither</span> a b = <span class="type">OwnLeft</span> a | <span class="type">OwnRight</span> b <span class="keyword">deriving</span> (<span class="type">Show</span>)</span></span><br></pre></td></tr></table></figure>
+<p><strong>递归类型</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 皮亚诺公理</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Nat</span> = <span class="type">Zero</span> | <span class="type">Succ</span> <span class="type">Nat</span> <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>, <span class="type">Ord</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">List</span> a = <span class="type">Nil</span> | <span class="type">Cons</span> a (<span class="type">List</span> <span class="title">a</span>) <span class="keyword">deriving</span> (<span class="type">Show</span>, <span class="type">Eq</span>, <span class="type">Ord</span>)</span></span><br></pre></td></tr></table></figure>
+<h4 id="类型的同构">类型的同构</h4>
+<p>类型 A 与 类型 B 可以相互转换，即，类型 A 的值集与类型 B 的值集一一对应。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 仅为说明</span></span><br><span class="line"><span class="title">fromAToB</span> :: <span class="type">A</span> -&gt; <span class="type">B</span></span><br><span class="line"><span class="title">fromBToA</span> :: <span class="type">B</span> -&gt; <span class="type">A</span></span><br></pre></td></tr></table></figure>
+<p>举例</p>
+<p><strong>Bool 与 OwnBool</strong></p>
+<p>类型信息</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">Bool</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Bool</span> = <span class="type">False</span> | <span class="type">True</span> 	<span class="comment">-- Defined in ‘GHC.Types’</span></span></span><br><span class="line">...</span><br><span class="line"><span class="class"><span class="keyword">instance</span> <span class="type">Show</span> <span class="type">Bool</span> <span class="comment">-- Defined in ‘GHC.Show’</span></span></span><br><span class="line"><span class="class">...</span></span><br><span class="line"><span class="class">&gt; :i <span class="type">OwnBool</span></span></span><br><span class="line"><span class="class">data <span class="type">OwnBool</span> = <span class="type">OwnTrue</span> | <span class="type">OwnFalse</span></span></span><br><span class="line"><span class="class"><span class="keyword">instance</span> [safe] <span class="type">Show</span> <span class="type">OwnBool</span></span></span><br></pre></td></tr></table></figure>
+<p>转换函数</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">bool2own</span> :: <span class="type">Bool</span> -&gt; <span class="type">OwnBool</span></span><br><span class="line"><span class="title">bool2own</span> <span class="type">False</span> = <span class="type">OwnFalse</span></span><br><span class="line"><span class="title">bool2own</span> <span class="type">True</span> = <span class="type">OwnTrue</span></span><br><span class="line"></span><br><span class="line"><span class="title">own2bool</span> :: <span class="type">OwnBool</span> -&gt; <span class="type">Bool</span></span><br><span class="line"><span class="title">own2bool</span> <span class="type">OwnFalse</span> = <span class="type">False</span></span><br><span class="line"><span class="title">own2bool</span> <span class="type">OwnTrue</span> = <span class="type">True</span></span><br></pre></td></tr></table></figure>
+<p><strong>Maybe 与 Option</strong></p>
+<p>类型信息</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">Maybe</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Maybe</span> a = <span class="type">Nothing</span> | <span class="type">Just</span> a 	<span class="comment">-- Defined in ‘GHC.Base’</span></span></span><br><span class="line">...</span><br><span class="line"><span class="class"><span class="keyword">instance</span> <span class="type">Show</span> a =&gt; <span class="type">Show</span> (<span class="type">Maybe</span> <span class="title">a</span>) <span class="comment">-- Defined in ‘GHC.Show’</span></span></span><br><span class="line"><span class="class">...</span></span><br><span class="line"><span class="class">&gt; :i <span class="type">Option</span></span></span><br><span class="line"><span class="class">data <span class="type">Option</span> a = <span class="type">None</span> | <span class="type">Some</span> a</span></span><br><span class="line"><span class="class"><span class="keyword">instance</span> [safe] <span class="type">Show</span> a =&gt; <span class="type">Show</span> (<span class="type">Option</span> <span class="title">a</span>)</span></span><br></pre></td></tr></table></figure>
+<p>转换函数</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">maybe2option</span> :: <span class="type">Show</span> a =&gt; <span class="type">Maybe</span> a -&gt; <span class="type">Option</span> a</span><br><span class="line"><span class="title">maybe2option</span> <span class="type">Nothing</span> = <span class="type">None</span></span><br><span class="line"><span class="title">maybe2option</span> (<span class="type">Just</span> a) = <span class="type">Some</span> a</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title">option2maybe</span> :: <span class="type">Show</span> a =&gt; <span class="type">Option</span> a -&gt; <span class="type">Maybe</span> a</span><br><span class="line"><span class="title">option2maybe</span> <span class="type">None</span> = <span class="type">Nothing</span></span><br><span class="line"><span class="title">option2maybe</span> (<span class="type">Option</span> a) = <span class="type">Just</span> a</span><br></pre></td></tr></table></figure>
+<p><strong>列表与自然数</strong></p>
+<p>List Unit 与 Nat</p>
+<p>类型信息</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">List</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">List</span> a = <span class="type">Nil</span> | <span class="type">Cons</span> a (<span class="type">List</span> <span class="title">a</span>)</span></span><br><span class="line">&gt; :i <span class="type">Nat</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Nat</span> = <span class="type">Zero</span> | <span class="type">Succ</span> <span class="type">Nat</span></span></span><br></pre></td></tr></table></figure>
+<p>转换信息</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">list2nat</span> :: <span class="type">List</span> <span class="type">Unit</span> -&gt; <span class="type">Nat</span></span><br><span class="line"><span class="title">list2nat</span> <span class="type">Nil</span> = <span class="type">Zero</span></span><br><span class="line"><span class="title">list2nat</span> (<span class="type">Cons</span> <span class="type">Unit</span> tail) = <span class="type">Succ</span> (list2nat tail)</span><br><span class="line"></span><br><span class="line"><span class="title">nat2list</span> :: <span class="type">Nat</span> -&gt; <span class="type">List</span> <span class="type">Unit</span></span><br><span class="line"><span class="title">nat2list</span> <span class="type">Zero</span> = <span class="type">Nil</span></span><br><span class="line"><span class="title">nat2list</span> (<span class="type">Succ</span> nat) = <span class="type">Cons</span> <span class="type">Unit</span> (nat2list nat)</span><br></pre></td></tr></table></figure>
+<p><em>联想</em> （自）</p>
+<p>类型是关于值的集合，类型之间的同构，本质是值集之间的一一对应，即使值集是无穷的，但，只要无穷集合的基数一样，无穷集合之间同样可以一一对应。所以，是否大部分的类型的值，都可以编码到自然数上？</p>
+<h4 id="adt">ADT</h4>
+<p>代数数据类型</p>
+<p>从一个新的角度来考虑类型，从类型的值集的大小这一角度，来对类型做出分类。</p>
+<p><strong>基本数字(自)</strong></p>
+<p>0</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Void</span></span></span><br></pre></td></tr></table></figure>
+<p>不存在值构造器，不能创建出 Void 类型的值。</p>
+<p>1</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">Unit</span></span><br><span class="line"><span class="comment">-- 或</span></span><br><span class="line">&gt; :i ()</span><br></pre></td></tr></table></figure>
+<p>只能构造出一个该类型的值。</p>
+<p>2</p>
+<p>Bool 或 Maybe Unit 或 Either Unit</p>
+<p>只能构造出两个该类型的值。</p>
+<p><span class="math inline">\(2^{32}\)</span></p>
+<p>Int</p>
+<p>只能构造出 <span class="math inline">\(2^{32}\)</span> 个该字段的值。</p>
+<p>...</p>
+<p><strong>和类型</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">Either</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Either</span> a b = <span class="type">Left</span> a | <span class="type">Right</span> b 	<span class="comment">-- Defined in ‘Data.Either’</span></span></span><br></pre></td></tr></table></figure>
+<p>该类型的值集的大小，依赖 a、b 类型变量的值集的大小，并且，该类型值集的大小，是 a、b 类型的值集大小之和。</p>
+<p>如：Either Bool Unit</p>
+<p>它的值集为</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="type">Left</span> <span class="type">True</span></span><br><span class="line">&gt; <span class="type">Left</span> <span class="type">False</span></span><br><span class="line">&gt; <span class="type">Right</span> <span class="type">Unit</span></span><br></pre></td></tr></table></figure>
+<p>所以 Either Bool Unit 值集的大小为 2 + 1 = 3</p>
+<p><strong>积类型</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; :i <span class="type">Pair</span></span><br><span class="line"><span class="class"><span class="keyword">data</span> <span class="type">Pair</span> a b = <span class="type">Pair</span> a b</span></span><br><span class="line"><span class="class"><span class="keyword">instance</span> [safe] (<span class="type">Show</span> <span class="title">a</span>, <span class="type">Show</span> <span class="title">b</span>) =&gt; <span class="type">Show</span> (<span class="type">Pair</span> <span class="title">a</span> <span class="title">b</span>)</span></span><br></pre></td></tr></table></figure>
+<p>该类型的值集的大小，依赖 a、b 类型变量的值集的大小，并且，该类型值集的大小，是 a、b 类型的值集大小之积。</p>
+<p>如：Pair Bool (Either Bool Unit)</p>
+<p>它的值集为</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="type">Pair</span> <span class="type">True</span> (<span class="type">Left</span> <span class="type">True</span>)</span><br><span class="line">&gt; <span class="type">Pair</span> <span class="type">True</span> (<span class="type">Left</span> <span class="type">False</span>)</span><br><span class="line">&gt; <span class="type">Pair</span> <span class="type">True</span> (<span class="type">Right</span> <span class="type">Unit</span>)</span><br><span class="line">&gt; <span class="type">Pair</span> <span class="type">False</span> (<span class="type">Left</span> <span class="type">True</span>)</span><br><span class="line">&gt; <span class="type">Pair</span> <span class="type">False</span> (<span class="type">Left</span> <span class="type">False</span>)</span><br><span class="line">&gt; <span class="type">Pair</span> <span class="type">False</span> (<span class="type">Right</span> <span class="type">Unit</span>)</span><br></pre></td></tr></table></figure>
+<p>所以 Pair Bool (Either Bool Unit) 的值集大小为 2 * 3 = 6</p>
+<p>（自）</p>
+<p>前面可以看到，模式匹配到的都是值构造器，所以，能够用于模式匹配的类型，都是代数数据类型，且，匹配的都是值构造器。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    wvyov
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://wvyov.me/2019/06/Haskell%20%E5%85%A5%E9%97%A8%E7%95%A5%E8%A7%88/" title="Haskell 入门略览">http://wvyov.me/2019/06/Haskell%20%E5%85%A5%E9%97%A8%E7%95%A5%E8%A7%88/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/formal_grammar/" rel="next" title="形式文法">
+                <i class="fa fa-chevron-left"></i> 形式文法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/zookeeper_note/" rel="prev" title="笔记 - Zookeeper">
+                笔记 - Zookeeper <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wvyov</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数式听闻"><span class="nav-number">1.</span> <span class="nav-text">函数式听闻</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hello"><span class="nav-number">2.</span> <span class="nav-text">Hello</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式"><span class="nav-number">3.</span> <span class="nav-text">表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类型"><span class="nav-number">4.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数"><span class="nav-number">5.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lambda-表达式"><span class="nav-number">6.</span> <span class="nav-text">\(\lambda\) 表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lambda-演算"><span class="nav-number">6.1.</span> <span class="nav-text">\(\lambda\) 演算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用"><span class="nav-number">6.2.</span> <span class="nav-text">应用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拓展可选"><span class="nav-number">6.3.</span> <span class="nav-text">拓展(可选)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代数数据类型"><span class="nav-number">7.</span> <span class="nav-text">代数数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类型的定义"><span class="nav-number">7.1.</span> <span class="nav-text">类型的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型的同构"><span class="nav-number">7.2.</span> <span class="nav-text">类型的同构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#adt"><span class="nav-number">7.3.</span> <span class="nav-text">ADT</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wvyov</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
