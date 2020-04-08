@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="系统模型 概念模型 分布式系统是一组节点，透过网络相互连接传递消息与通信后并协调它们的行为而形成的系统。  节点是分布是分布式系统中通信的基本单元，带有时钟，或有持久化存储。节点有可能宕机，时钟可能不同步。 节点之间通过网络进行通信，通信信道一般认为是可信的。消息可能丢失、乱序、错误。 节点之间通过网络通信，按照一定的协议协调节点的行为。协议可能不被遵循，称为拜占庭将军问题。      理想情况">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笔记 - 分布式系统">
+<meta property="og:url" content="https://wvyov.com/2020/04/distributed_note/index.html">
+<meta property="og:site_name" content="无有的小书屋">
+<meta property="og:description" content="系统模型 概念模型 分布式系统是一组节点，透过网络相互连接传递消息与通信后并协调它们的行为而形成的系统。  节点是分布是分布式系统中通信的基本单元，带有时钟，或有持久化存储。节点有可能宕机，时钟可能不同步。 节点之间通过网络进行通信，通信信道一般认为是可信的。消息可能丢失、乱序、错误。 节点之间通过网络通信，按照一定的协议协调节点的行为。协议可能不被遵循，称为拜占庭将军问题。      理想情况">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-08T11:43:12.751Z">
+<meta property="article:author" content="wvyov">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://wvyov.com/2020/04/distributed_note/"/>
+
+
+
+
+
+  <title>笔记 - 分布式系统 | 无有的小书屋</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无有的小书屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://wvyov.com/2020/04/distributed_note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wvyov">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无有的小书屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">笔记 - 分布式系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-08T00:00:00+08:00">
+                2020-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="系统模型">系统模型</h3>
+<h4 id="概念模型">概念模型</h4>
+<p>分布式系统是一组节点，透过网络相互连接传递消息与通信后并协调它们的行为而形成的系统。</p>
+<ul>
+<li><p><strong>节点</strong>是分布是分布式系统中通信的基本单元，带有<strong>时钟</strong>，或有持久化存储。节点有可能宕机，时钟可能不同步。</p></li>
+<li><p>节点之间通过网络进行<strong>通信</strong>，通信信道一般认为是可信的。消息可能丢失、乱序、错误。</p></li>
+<li><p>节点之间通过网络通信，按照一定的<strong>协议</strong>协调节点的行为。协议可能不被遵循，称为拜占庭将军问题。</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>理想情况</th>
+<th>非理想情况</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>节点</td>
+<td>不会宕机</td>
+<td>可能会宕机，或进程被 kill</td>
+</tr>
+<tr class="even">
+<td>时钟</td>
+<td>每个节点的时钟完全一致的</td>
+<td>时钟抖动、时钟偏移、同步误差</td>
+</tr>
+<tr class="odd">
+<td>通信</td>
+<td>信息被有序准确地送达</td>
+<td>消息乱序、消息丢失、消息错误、网络分区</td>
+</tr>
+<tr class="even">
+<td>协议</td>
+<td>每个节点都按照协议执行</td>
+<td>拜占庭将军问题</td>
+</tr>
+</tbody>
+</table>
+<p>分布式系统中，任意时刻、任意节点、任意组件都可能发生任何问题。在考虑分布式系统时，搞清楚它的基础模型、前提假设是非常重要的，如，有的系统要考虑拜占庭将军问题，有的系统可能假定不会发生拜占庭将军问题；有的系统可能考虑时钟是完全不同步的，有的系统可能假定时钟误差是在一定范围的，等等。</p>
+<h4 id="异常">异常</h4>
+<p><em>时钟同步</em>：</p>
+<ol type="1">
+<li><p>物理时钟。机器节点可以通过时钟同步协议（ NTP/PTP ）同步物理时钟。</p></li>
+<li><p>逻辑时钟。根据分布式系统中的事件之间的 happens-before 关系建立逻辑时钟，为事件打上时间戳。</p></li>
+</ol>
+<p>理论上，在一个分布式系统内，保持联网的各机器节点的时钟误差可以控制在一定范围内。</p>
+<p><em>可靠通信 与 TCP</em>：</p>
+<ol type="1">
+<li>TCP 协议只能保证 TCP 协议栈之间的可靠通信，但不能保证应用层之间的可靠通信。如，当接收方正常收到 TCP 消息，并且发送了确认数据包，但，如果接收方此时宕机，该消息无法被正常处理，等。</li>
+<li>TCP 只能保证同一个 TCP 连接内的消息是有序的，但不能保证多条 TCP 连接之间的消息有序。分布式系统中，节点之间可能建立多条 TCP 连接。</li>
+</ol>
+<p><em>网络分区</em>：</p>
+<p>一个分布式系统中，各个节点之间的通信网络，分裂为多个独立的通信网络，不同通信网络内的节点不能相互通信。</p>
+<p>比如：由 A、B、C 三个节点构成的分布式系统，正常情况下，{A、B、C} 三个节点之间可以相互通信，构成一个通信网络。发生网络分区之后，通信网络分裂为 {A} 和 {B、C} 两个通信网络，A 与 {B、C} 通信，{B、C} 之间可以相互通信。</p>
+<p>在现实中，由于网络设备和机器节点的故障，没有分布式系统可以防止网络分区。</p>
+<p><em>拜占庭将军问题</em>：</p>
+<p>拜占庭将军问题，根源在于有“叛徒”节点发送了虚假消息，或在不可信网络上通信，消息被劫持，转发了虚假的消息。</p>
+<table>
+<thead>
+<tr class="header">
+<th>节点</th>
+<th>通信</th>
+<th>是否需要考虑拜占庭将军问题</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>存在不可控节点</td>
+<td>不可信网络</td>
+<td>需要考虑</td>
+</tr>
+<tr class="even">
+<td>可控节点</td>
+<td>可信网络</td>
+<td>一般不考虑</td>
+</tr>
+</tbody>
+</table>
+<p>如果在存在拜占庭将军问题的情况下，仍然可以达成共识，则称达到了拜占庭容错。</p>
+<h4 id="一致性">一致性</h4>
+<p>一般，外部系统通过 client 与分布式系统交互。每个 client 发起读、写请求，由分布式系统处理完成后响应给 client。<strong>一致性模型</strong>描述这些读写请求以怎样的顺序被分布式系统处理。</p>
+<p>一般来说，对于读操作，应该返回最近的写操作所写入的结果。几乎所有的一致性模型约束的是「最近」，对于当前 client，当前读请求，什么是「最近」。</p>
+<ol type="1">
+<li><p>线性一致性（强一致性）：所有的读写操作是原子的，构成全序。读操作读取到在全序中离它最近的一次写操作写入的结果。全序，按照全局时钟中的先后顺序构成全序。</p></li>
+<li><p>顺序一致性：所有的读写操作是原子的，构成全序。读操作读取到在全序中离它最近的一次写操作写入的结果。全序，按照读写操作的执行顺序（不能并发）。</p></li>
+<li><p>弱一致性：所有的读写操作没有确定的顺序。不能保证读操作读到最近的写操作。</p></li>
+<li><p>其他：还有按照用户、session 等维度划分的最近，比如，session 一致性，client 在当前 session 中一旦读到某个写入的值，之后不会读到比它更旧的值。</p></li>
+</ol>
+<p>PS：可以看到这里的一致性模型和并发编程领域的一致性模型是非常相似的。</p>
+<p>更为实际的，对于一致性，我们通常关注，怎样控制多个数据副本的更新（写）。比如，分布式系统中，数据副本的同步复制，缓存更新过程中的事务性控制。</p>
+<h4 id="cap-定理">CAP 定理</h4>
+<p>对于分布式系统，不可能同时满足一致性（Consistency, <strong>C</strong>)、可用性（Availability, <strong>A</strong>）、分区容错性（Partition tolerance, <strong>P</strong>）。</p>
+<ul>
+<li>一致性（C）：强一致性。</li>
+<li>可用性（A）：任何 client 连接到系统中任一 节点，每次请求都可以得到非错的响应。</li>
+<li>分区容错性（P）：允许系统中出现网络分区。</li>
+</ul>
+<p><em>理解 CAP</em>：</p>
+<p>不妨想象由两个节点构成的分布式系统。</p>
+<p>在发生网络分区（P）的情况下，为了保证一致性（C），需要让两个网络分区中的节点都停止提供服务，即，让两个节点不可用，牺牲可用性；为了保证可用性（P），让两个节点继续对外提供服务，这时，两个节点可能收到请求写入不同的数据，数据就不一致了，即，牺牲一致性。</p>
+<p>在保证不发生网络分区（P）的系统中，为了保证一致性（C）、可用性（P），分布式系统将退化为只有一个节点的单机服务，因为只有一个节点的情况下，不存在网络分区，而且此时一定可以保证一致性、可用性。</p>
+<p>在现实中，由于没有分布式系统可以防止网络分区，所以分布式系统一定要容忍分区容错性，而在一致性、可用性之间权衡。</p>
+<p>PS：</p>
+<p>实际上，一致性（C）有不同的层级，如：线性一致性、单调一致性、弱一致性、最终一致性等；可用性也有不同的层级，如：所有节点都可用，部分可用，完全不可用等。</p>
+<p>所以，对一致性、可用性的权衡，并不是完全不相容的，可以对一致性、可用性取不同的层级要求，如，BASE 理论等。</p>
+<h3 id="复制">复制</h3>
+<p>复制在分布式系统中广泛应用。通过复制创建多个数据副本，分布在不同的节点上，在不同节点之间同步数据，提供冗余，以提高可靠性、可用性。</p>
+<p>复制可以是去中心化的，不存在中心节点，任意两个节点之间可以相互同步数据，比如，Gossip、blockchain。</p>
+<p>复制一般是中心化的，存在中心节点，中心节点（主副本）向其他从节点（从副本）复制，这时称为主从复制（Primary-Backup Replication）。</p>
+<p>PS：选主过程可以是去中心化的。</p>
+<p>接下来仅讨论主从复制。</p>
+<h4 id="复制策略">复制策略</h4>
+<p>假设同一份数据有 <span class="math inline">\(N\)</span> 个数据副本，数据带有版本号，其中一个主副本，<span class="math inline">\(N - 1\)</span> 个副本与主副本同步数据。更新（写）时，需写入 <span class="math inline">\(W\)</span> 个副本（一定包含主副本）之后，再响应，其他副本异步地与主副本同步数据。读取时，需读到 <span class="math inline">\(R\)</span> 个副本之后，取最大版本号的数据，再响应。</p>
+<p>其中 <span class="math inline">\(N\)</span> 一般是预设的，固定的。</p>
+<p><em>同步复制</em>：</p>
+<ul>
+<li>更新：<span class="math inline">\(W = R\)</span>，写入全部副本。</li>
+<li>读取：<span class="math inline">\(R = 1\)</span>，读取当前节点的数据。</li>
+<li>一致性：任一 client 连接到任意节点读到的最近写入数据，且是相同的。</li>
+</ul>
+<p><em>异步复制</em>：</p>
+<ul>
+<li>更新：<span class="math inline">\(W = 1\)</span>，仅写入主副本。</li>
+<li>读取：<span class="math inline">\(R = 1\)</span>，读取当前节点的数据。</li>
+<li>一致性：当前 client 能否读到最最近写入数据，与异步复制的进度与其连接的节点有关。</li>
+</ul>
+<p><em>Quorum 机制</em>：</p>
+<ul>
+<li><p>更新：<span class="math inline">\(W &gt; N/2\)</span>，过半写入。</p></li>
+<li><p>读取：<span class="math inline">\(R &gt; N -W\)</span>，保证读写的数据副本存在交集，一定可以读到最近写入。</p></li>
+<li><p>一致性：配合版本号，可以保证读到最近写入数据，且是相同的。</p></li>
+</ul>
+<p>在 Quorum 机制下，更新时需要事务性保证，如果不能保证，在读取时要解决版本冲突问题。</p>
+<p><em>在上述各种复制过程中</em>：</p>
+<p>数据的版本号，可以用物理时间戳、逻辑时钟，或加上机器 id 组合，等方式进行构造。</p>
+<p>当 <span class="math inline">\(W &gt; 1\)</span> 时，需要保证写入是一个事务性写入。</p>
+<p>如果从副本节点上的数据落后于主副本节点，需要按照某种协议同步数据。</p>
+<p>如果主节点宕机，需要某种机制来重新选主，并进行数据恢复。</p>
+<h3 id="分布式事务">分布式事务</h3>
+<p>由多个节点共同完成的事务，需要保证 ACID。</p>
+<p>比如，在副本复制时，需要事务性写入，保证多个节点复制数据时，要么成功，要么失败，是一致的。</p>
+<p>分布式事务可以保证一致性，但不能容忍网络分区，如果网络分区，将不可用。</p>
+<p>有 2PC、3PC、TCC 等。规范性协议有 X/Open 的 XA 协议，采用 2PC。</p>
+<h4 id="pc">2PC</h4>
+<p>两阶段提交协议（Two-phase commit protocol），它可以协调参与事务的节点共同完成事务。</p>
+<p><em>假设</em>：</p>
+<ul>
+<li><p>存在一个协调者节点，其他节点作为参与者节点，且节点之间可以通信。</p></li>
+<li><p>所有节点采用预写式日志（WAL）（Undo、Redo），且日志被持久化，不会丢失。</p></li>
+<li><p>所有节点均可恢复。</p></li>
+</ul>
+<p><em>第一阶段</em>：</p>
+<ol type="1">
+<li>协调者向参与者询问是否可以执行事务，等待响应。</li>
+<li>参与者执行该事务，并将 Undo 和 Redo 信息写入日志。</li>
+<li>根据事务执行情况，响应协调者。若成功，响应「同意」；若失败，响应「中止」。</li>
+</ol>
+<p><em>第二阶段</em>：</p>
+<p>当<strong>全部</strong>参与者响应成功：</p>
+<ol type="1">
+<li>协调者向参与者发出「提交」的请求。</li>
+<li>参与者完成事务，并释放在整个事务期间占用的资源。</li>
+<li>参与者向协调者响应「完成」。</li>
+<li>协调者收到所有参与者的「完成」消息后，完成事务。</li>
+</ol>
+<p>当存在参与者响应「中止」，或超时未收到全部参与这的消息：</p>
+<ol type="1">
+<li>协调者向参与者发出「回滚操作」的请求。</li>
+<li>参与者利用之前写入的 Undo 信息回滚，并释放在整个事务期间占用的资源。</li>
+<li>参与者向协调者响应「回滚完成」。</li>
+<li>协调者收到所有参与者的「回滚完成」消息后，取消事务。</li>
+</ol>
+<p><em>可能存在的问题</em>：</p>
+<ul>
+<li><p>同步阻塞</p></li>
+<li><p>单点问题</p></li>
+<li><p>数据不一致，在第二阶段，若由于网络问题，只有部分节点收到了 commit 请求</p></li>
+</ul>
+<h3 id="一致性协议">一致性协议</h3>
+<p>多个节点关于值如何达成共识（一致性）的协议。</p>
+<p>比如，多个节点同时提出设定某个值，如何协调各个节点，让他们取得共识（一致性），设定为同一个值。</p>
+<h4 id="paxos">Paxos</h4>
+<p>Paxos 算法是一种基于消息传递的分布式一致性算法。</p>
+<p>Paxos 将节点分为 proposers、acceptors 和 learners，允许身兼数职。</p>
+<p><em>角色功能</em>：</p>
+<ul>
+<li>proposers，提出提案，提案由提案编号和提案内容（value）构成。</li>
+<li>acceptors，收到提案后，接受（accept）提案。若提案获得多数（majority）的 acceptors 接受，则成该提案被批准（chosen），成为决议。</li>
+<li>learners，只能学习被批准的提案。</li>
+</ul>
+<p><em>基本约束</em>：</p>
+<blockquote>
+<ol type="1">
+<li>决议只有在被 proposers 提出后才能被批准。即，acceptors 不能接受未被 proposers 提出的提案。</li>
+<li>在一次 Paxos 算法执行的实例中，只能批准（chosen）一个提案内容（value）。</li>
+<li>leaners 只能获得被批准的提案。</li>
+</ol>
+</blockquote>
+<p><em>加强约束</em>：</p>
+<blockquote>
+<p><span class="math inline">\(P2^c\)</span>：如果一个编号为 n 的提案具有 value v，那么存在一个多数派，要么他们中所有人都没有接受（accept）编号小于 n 的任何提案，要么他们已经接受（accept）的所有编号小于 n 的提案中编号最大的那个提案具有 value v。</p>
+</blockquote>
+<blockquote>
+<p><span class="math inline">\(P1^a\)</span>：当且仅当acceptor没有回应过编号大于n的prepare请求时，acceptor接受（accept）编号为n的提案。</p>
+</blockquote>
+<p><strong><em>Basic Paxos</em></strong>：</p>
+<p>第一阶段，prepare：</p>
+<ol type="1">
+<li>proposer 选择一个提案编号 n 并将prepare请求发送给 acceptors 中的一个多数派。</li>
+<li>acceptor 收到 prepare 消息后，如果提案的编号大于它已经回复的所有 prepare 消息(回复消息表示接受accept)，则 acceptor 将自己上次接受的提案回复给 proposer，并承诺不再回复小于n的提案。</li>
+</ol>
+<p>第二阶段，chosen：</p>
+<ol type="1">
+<li>当一个 proposer 收到了多数 acceptors 对 prepare 的回复后，就进入批准阶段。它要向回复 prepare 请求的 acceptors 发送 accept 请求，包括编号 n 和根据 P2c 决定的 value。</li>
+<li>在不违背自己向其他 proposer 的承诺的前提下，acceptor 收到 accept 请求后即批准这个请求。</li>
+</ol>
+<p>PS：在 Basic Paxos 中，只能对一个值取得共识（一致性）。</p>
+<h3 id="reference">Reference</h3>
+<ul>
+<li>《分布式系统原理介绍》</li>
+<li>《分布式系统：概念与设计》（第5版）</li>
+<li><a href="https://en.wikipedia.org/wiki/Happened-before" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Happened-before</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E7%BA%BF%E6%80%A7%E4%B8%80%E8%87%B4%E6%80%A7" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/线性一致性</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E5%86%85%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E6%A8%A1%E5%9E%8" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/内存一致性模型</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Replication_(computing)" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Replication_(computing)</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/Quorum_(%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F)" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/Quorum_(分布式系统)</a></li>
+<li>https://en.wikipedia.org/wiki/Quorum_(distributed_computing)</li>
+<li><a href="http://web.mit.edu/6.033/2005/wwwdocs/quorum_note.html" target="_blank" rel="noopener">http://web.mit.edu/6.033/2005/wwwdocs/quorum_note.html</a></li>
+<li><a href="https://www.infoq.cn/article/cap-twelve-years-later-how-the-rules-have-changed" target="_blank" rel="noopener">https://www.infoq.cn/article/cap-twelve-years-later-how-the-rules-have-changed</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/CAP%E5%AE%9A%E7%90%86" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/CAP定理</a></li>
+<li><a href="https://snarfed.org/transactions_across_datacenters_io.html" target="_blank" rel="noopener">https://snarfed.org/transactions_across_datacenters_io.html</a></li>
+<li><a href="https://zzyongx.github.io/blogs/cap-confusion-problems-with-partition-tolerance.html" target="_blank" rel="noopener">https://zzyongx.github.io/blogs/cap-confusion-problems-with-partition-tolerance.html</a></li>
+<li><a href="https://www.infoq.cn/article/rlwbyWz4JC6L6pQ7hqI6" target="_blank" rel="noopener">https://www.infoq.cn/article/rlwbyWz4JC6L6pQ7hqI6</a></li>
+<li><a href="https://www.infoq.cn/article/cap-twelve-years-later-how-the-rules-have-changed" target="_blank" rel="noopener">https://www.infoq.cn/article/cap-twelve-years-later-how-the-rules-have-changed</a></li>
+<li><a href="http://book.mixu.net/distsys/" target="_blank" rel="noopener">http://book.mixu.net/distsys/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    wvyov
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wvyov.com/2020/04/distributed_note/" title="笔记 - 分布式系统">https://wvyov.com/2020/04/distributed_note/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/jvm_concurrency_note/" rel="next" title="笔记 - JVM 并发">
+                <i class="fa fa-chevron-left"></i> 笔记 - JVM 并发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wvyov</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统模型"><span class="nav-number">1.</span> <span class="nav-text">系统模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概念模型"><span class="nav-number">1.1.</span> <span class="nav-text">概念模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常"><span class="nav-number">1.2.</span> <span class="nav-text">异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一致性"><span class="nav-number">1.3.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cap-定理"><span class="nav-number">1.4.</span> <span class="nav-text">CAP 定理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制"><span class="nav-number">2.</span> <span class="nav-text">复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#复制策略"><span class="nav-number">2.1.</span> <span class="nav-text">复制策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式事务"><span class="nav-number">3.</span> <span class="nav-text">分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pc"><span class="nav-number">3.1.</span> <span class="nav-text">2PC</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性协议"><span class="nav-number">4.</span> <span class="nav-text">一致性协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#paxos"><span class="nav-number">4.1.</span> <span class="nav-text">Paxos</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wvyov</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
