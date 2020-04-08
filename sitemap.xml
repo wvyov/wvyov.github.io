@@ -2,30 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://wvyov.com/2019/12/kafka_note/</loc>
+    <loc>https://wvyov.com/2019/11/zookeeper_note/</loc>
     
-    <lastmod>2020-04-08T12:01:49.390Z</lastmod>
+    <lastmod>2020-04-08T12:25:58.349Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/</loc>
+    
+    <lastmod>2020-04-08T12:25:33.611Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://wvyov.com/2019/12/redis_note/</loc>
     
-    <lastmod>2020-04-08T12:01:42.411Z</lastmod>
+    <lastmod>2020-04-08T12:25:02.226Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://wvyov.com/2019/11/zookeeper_note/</loc>
+    <loc>https://wvyov.com/2019/12/kafka_note/</loc>
     
-    <lastmod>2020-04-08T12:01:33.348Z</lastmod>
+    <lastmod>2020-04-08T12:24:55.260Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://wvyov.com/2020/04/distributed_note/</loc>
     
-    <lastmod>2020-04-08T11:52:23.294Z</lastmod>
+    <lastmod>2020-04-08T12:24:37.662Z</lastmod>
     
   </url>
   
@@ -40,13 +47,6 @@
     <loc>https://wvyov.com/2020/03/jvm_concurrency_note/</loc>
     
     <lastmod>2020-03-28T05:47:46.056Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/</loc>
-    
-    <lastmod>2020-03-27T20:31:24.258Z</lastmod>
     
   </url>
   
