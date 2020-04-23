@@ -87,7 +87,7 @@
 <meta property="og:description" content="首先，介绍锁的分类，如行级锁、表级锁、共享锁、排他锁等，并讨论这些锁之间的相容性（理论）。 其次，介绍 InnoDB 中的锁，如记录锁、间隙锁、Next-Key Locks 等，并讨论 Sql、索引与它的关系。 最后，利用上述信息，验证锁的相容性。 锁的分类 从锁的粒度上，有行级锁、表级锁。 从锁的概念上，有共享锁（S，或读锁）、排他锁（X，或写锁）。 这两者结合，既有行级的共享锁、排他锁，也有表">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-04-22T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-04-23T14:51:25.018Z">
+<meta property="article:modified_time" content="2020-04-23T15:43:27.286Z">
 <meta property="article:author" content="wvyov">
 <meta name="twitter:card" content="summary">
 
@@ -354,7 +354,7 @@
 <p><em>Sql、索引与锁的关系</em>：</p>
 <p>InnoDB 在处理一致性锁定读、update、delete 这些语句时，会锁定相应的索引记录。</p>
 <p>如果需要在二级索引记录上加排他锁（X），那么还会在二级索引相关联的聚集索引上加锁。</p>
-<p>如果使用聚集索引或唯一索引来搜索，并且可以唯一确定索引记录，则退化为记录锁，对相关索引记录加 Record Locks；反之，如果不能唯一确定索引记录（如，范围条件），则锁定相关索引记录，并锁定间隙，即加Next-Key Locks。</p>
+<p>如果使用聚集索引或唯一索引来搜索，并且可以唯一确定索引记录，则退化为记录锁，对相关索引记录加 Record Locks；反之，如果不能唯一确定索引记录（如，范围条件），则锁定相关索引记录，并锁定间隙，即加Next-Key Locks。这里的“索引记录”，指的是聚集或唯一索引记录。</p>
 <table>
 <colgroup>
 <col style="width: 34%" />
@@ -371,12 +371,12 @@
 <tbody>
 <tr class="odd">
 <td>有聚集索引或唯一索引，可以唯一确定索引记录，如 id= v1 or id = v2...</td>
-<td>符合条件的索引记录</td>
+<td>符合条件的聚集或唯一索引记录</td>
 <td>Record Locks</td>
 </tr>
 <tr class="even">
 <td>有聚集索引或唯一索引，但不能唯一确定索引记录，如 id &gt; v1 and id &lt; v2</td>
-<td>符合条件的索引记录</td>
+<td>符合条件的聚集或唯一索引记录</td>
 <td>Next-Key Locks</td>
 </tr>
 <tr class="odd">
