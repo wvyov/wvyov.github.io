@@ -82,7 +82,7 @@
 <meta name="description" content="分布式系统中，如何为发生在各个节点上的一系列事件排序？ 即，如何在分布式系统中定义时钟，为各个节点上的事件排序。 全局时钟： 通过完全同步的时钟为事件打上时间戳。比较时间戳，进行事件排序。 问题：各个节点的时钟是否一致？高精度时间源、刷新频率？时钟偏移？ 逻辑时钟： 通过事件之间的 \(happened-before\) 关系（但不一定是因果关系）定义逻辑时钟，再通过逻辑时钟所定义的偏序关系确定事">
 <meta property="og:type" content="article">
 <meta property="og:title" content="笔记 - 逻辑时钟">
-<meta property="og:url" content="https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/index.html">
+<meta property="og:url" content="https://wvyov.com/2019/12/logical_clock_note/index.html">
 <meta property="og:site_name" content="无有的小书屋">
 <meta property="og:description" content="分布式系统中，如何为发生在各个节点上的一系列事件排序？ 即，如何在分布式系统中定义时钟，为各个节点上的事件排序。 全局时钟： 通过完全同步的时钟为事件打上时间戳。比较时间戳，进行事件排序。 问题：各个节点的时钟是否一致？高精度时间源、刷新频率？时钟偏移？ 逻辑时钟： 通过事件之间的 \(happened-before\) 关系（但不一定是因果关系）定义逻辑时钟，再通过逻辑时钟所定义的偏序关系确定事">
 <meta property="og:locale" content="zh_CN">
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="https://wvyov.com/2019/12/逻辑时钟/"/>
+  <link rel="canonical" href="https://wvyov.com/2019/12/logical_clock_note/"/>
 
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/">
+    <link itemprop="mainEntityOfPage" href="https://wvyov.com/2019/12/logical_clock_note/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wvyov">
@@ -455,7 +455,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/" title="笔记 - 逻辑时钟">https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/</a>
+    <a href="https://wvyov.com/2019/12/logical_clock_note/" title="笔记 - 逻辑时钟">https://wvyov.com/2019/12/logical_clock_note/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -566,7 +566,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -577,7 +577,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>

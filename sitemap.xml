@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://wvyov.com/2020/04/mysql_lock_compatibility/</loc>
+    
+    <lastmod>2020-04-23T14:43:54.149Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://wvyov.com/2019/11/zookeeper_note/</loc>
     
     <lastmod>2020-04-08T12:25:58.349Z</lastmod>
@@ -9,7 +16,7 @@
   </url>
   
   <url>
-    <loc>https://wvyov.com/2019/12/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/</loc>
+    <loc>https://wvyov.com/2019/12/logical_clock_note/</loc>
     
     <lastmod>2020-04-08T12:25:33.611Z</lastmod>
     
